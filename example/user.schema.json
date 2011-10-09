@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "verbs": ["GET"],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "login": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "\\d{8}T\\d{6}Z"
+    },
+    "_links": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "type": "string"
+        },
+        "favorites": {
+          "type": "string",
+          "profile": "/schema/user",
+          "verbs": ["GET", "POST"],
+          "optional": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
+
