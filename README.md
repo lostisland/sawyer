@@ -43,7 +43,7 @@ user.favorites.create sake
 
 This library is experimental.  Don't expect there to be tests, or for
 anything to work.  APIs will change.  Sawyer may even be a complete
-failure.
+failure.  Whatever happened, happened.
 
 ```ruby
 # tested on ruby 1.9.2 with these gems: sinatra, faraday, yajl-ruby
