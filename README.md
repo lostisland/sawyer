@@ -86,11 +86,16 @@ failure.  Whatever happened, happened.
 #
 # start a sawyer console with: `irb -r ./lib/sawyer`
 require 'pp'
-agent = Sawyer::Agent.new
-agent.load 'http://localhost:4567'
+agent = Sawyer::Agent.new 'http://localhost:4567'
 
-pp agent.profiles.keys
-pp agent.profiles['/schema/user'].properties
+puts agent.inspect
+
+pp agent.schemas.keys
+puts agent.schemas['/schema/user'].inspect
+pp agent.schemas['/schema/user'].properties
+
+pp agent.relations.keys
+pp agent.relations['users']
 ```
 
 [faraday]: https://github.com/technoweenie/faraday

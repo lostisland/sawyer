@@ -2,7 +2,8 @@ require 'sinatra'
 require 'yajl'
 
 get '/' do
-  headers 'content-type' => content_type
+  app_type
+
   Yajl.dump({
     :_links => [
       {:rel => :users,  :schema => "/schema/user"},
@@ -11,8 +12,8 @@ get '/' do
   }, :pretty => true)
 end
 
-def content_type
-  "application/vnd.sushihub+json; profile=/schema/#{type}"
+def app_type
+  content_type "application/vnd.sushihub+json"
 end
 
 users = [
@@ -40,12 +41,13 @@ nigiri = [
 ]
 
 get '/users' do
-  headers 'content-type' => content_type
+  app_type
+
   Yajl.dump users, :pretty => true
 end
 
 get '/users/:login' do
-  headers 'content-type' => content_type
+  headers 'Content-Type' => app_type
   if hash = users.detect { |u| u[:login] == params[:login] }
     Yajl.dump hash, :pretty => true
   else
@@ -54,7 +56,8 @@ get '/users/:login' do
 end
 
 get '/users/:login/favorites' do
-  headers 'content-type' => content_type
+  app_type
+
   case params[:login]
   when users[0][:login] then Yajl.dump([nigiri[0]], :pretty => true)
   when users[1][:login] then Yajl.dump([], :pretty => true)
@@ -63,12 +66,14 @@ get '/users/:login/favorites' do
 end
 
 get '/nigiri' do
-  headers 'content-type' => content_type
+  app_type
+
   Yajl.dump nigiri, :pretty => true
 end
 
 get '/nigiri/:name' do
-  headers 'content-type' => content_type
+  app_type
+
   if hash = nigiri.detect { |n| n[:name] == params[:name] }
     Yajl.dump hash, :pretty => true
   else
@@ -77,6 +82,8 @@ get '/nigiri/:name' do
 end
 
 get '/schema' do
+  app_type
+
   Yajl.dump([
     {:_links => {:self => '/schema/user'}},
     {:_links => {:self => '/schema/nigiri'}}
@@ -84,6 +91,8 @@ get '/schema' do
 end
 
 get '/schema/:type' do
+  app_type
+
   path = File.expand_path("../#{params[:type]}.schema.json", __FILE__)
   if File.exist?(path)
     headers 'content-type' => content_type

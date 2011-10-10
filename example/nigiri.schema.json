@@ -1,7 +1,7 @@
 {
   "type": "object",
   "relations": [
-    {"rel": "list": "href": "/nigiri"}
+    {"rel": "list", "href": "/nigiri"}
   ],
   "properties": {
     "id": {
