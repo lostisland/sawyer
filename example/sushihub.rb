@@ -4,10 +4,10 @@ require 'yajl'
 get '/' do
   headers 'content-type' => 'application/vnd.sushihub+json'
   Yajl.dump({
-    :_links => {
-      :users  => '/users',
-      :nigiri => '/nigiri'
-    }
+    :_links => [
+      {:rel => :users,  :href => '/users',  :profile => "/schema/user"},
+      {:rel => :nigiri, :href => '/nigiri', :profile => "/schema/nigiri"}
+    ]
   }, :pretty => true)
 end
 
@@ -17,16 +17,26 @@ end
 
 users = [
   {:id => 1, :login => 'sawyer',  :created_at => Time.utc(2004, 9, 22),
-   :_links => {:self => '/users/sawyer', :favorites => '/users/sawyer/favorites'}},
+   :_links => [
+     {:rel => :self,      :href => '/users/sawyer'},
+     {:rel => :favorites, :href => '/users/sawyer/favorites', :profile => "/schema/nigiri"}
+   ]},
   {:id => 2, :login => 'faraday', :created_at => Time.utc(2004, 12, 22),
-   :_links => {:self => '/users/faraday', :favorites => '/users/faraday/favorites'}}
+   :_links => [
+     {:rel => :self,      :href => '/users/faraday'},
+     {:rel => :favorites, :href => '/users/faraday/favorites', :profile => "/schema/nigiri"}
+   ]}
 ]
 
 nigiri = [
   {:id => 1, :name => 'sake',  :fish => 'salmon',
-   :_links => {:self => '/nigiri/sake'}},
+   :_links => [
+     {:rel => :self, :href => '/nigiri/sake'}
+   ]},
   {:id => 2, :name => 'unagi', :fish => 'eel',
-   :_links => {:self => '/nigiri/unagi'}}
+   :_links => [
+     {:rel => :self, :href => '/nigiri/unagi'}
+   ]}
 ]
 
 get '/users' do

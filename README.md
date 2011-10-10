@@ -23,8 +23,7 @@ situation, and figures out the next action.
 
 # setup the auth info and the API endpoint so we can grab the schema 
 # info and initial actions.
-agent = Sawyer.new Faraday
-agent.basic_auth 'technoweenie', 'monkey'
+agent = Sawyer::Agent.new
 agent.load 'https://api.sushihub.com'
 
 # salmon is all you need
@@ -35,7 +34,30 @@ sake = agent.nigiri.get 'sake'
 # mime: application/vnd.sushihub.user+json
 # /users/technoweenie
 user = agent.user.get 'technoweenie'
+
+# user has "favorites:create" rel with method=POST
 user.favorites.create sake
 ```
 
+## Implemented
+
+This library is experimental.  Don't expect there to be tests, or for
+anything to work.  APIs will change.  Sawyer may even be a complete
+failure.
+
+```ruby
+# tested on ruby 1.9.2 with these gems: sinatra, faraday, yajl-ruby
+# bundler coming soon, lol
+# run example/sushihub.rb to start the example app
+#
+# start a sawyer console with: `irb -r ./lib/sawyer`
+require 'pp'
+agent = Sawyer::Agent.new
+agent.load 'http://localhost:4567'
+
+pp agent.profiles.keys
+pp agent.profiles['/schema/user'].properties
+```
+
 [faraday]: https://github.com/technoweenie/faraday
+
