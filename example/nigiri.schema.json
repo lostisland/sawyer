@@ -4,7 +4,8 @@
   "properties": {
     "id": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 1,
+      "readonly": true
     },
     "name": {
       "type": "string"
@@ -19,7 +20,8 @@
           "type": "string"
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "readonly": false
     }
   }
 }

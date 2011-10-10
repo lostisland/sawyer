@@ -4,14 +4,16 @@
   "properties": {
     "id": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 1,
+      "readonly": true
     },
     "login": {
       "type": "string"
     },
     "created_at": {
       "type": "string",
-      "pattern": "\\d{8}T\\d{6}Z"
+      "pattern": "\\d{8}T\\d{6}Z",
+      "readonly": true
     },
     "_links": {
       "type": "object",
@@ -26,7 +28,8 @@
           "optional": true
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "readonly": true
     }
   }
 }
