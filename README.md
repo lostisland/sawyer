@@ -38,3 +38,4 @@ user = agent.user.get 'technoweenie'
 user.favorites.create sake
 ```
 
+[faraday]: https://github.com/technoweenie/faraday
