@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "verbs": ["GET"],
+  "relations": [
+  ],
   "properties": {
     "id": {
       "type": "integer",
@@ -14,14 +15,30 @@
       "type": "string"
     },
     "_links": {
-      "type": "object",
-      "properties": {
-        "self": {
-          "type": "string"
-        }
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string",
+            "optional": true
+          },
+          "method": {
+            "type": "string",
+            "default": "get"
+          },
+          "schema": {
+            "type": "string",
+            "optional": true
+          }
+        },
+        "additionalProperties": false
       },
       "additionalProperties": false,
-      "readonly": false
+      "readonly": true
     }
   }
 }

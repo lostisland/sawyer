@@ -2,16 +2,16 @@ require 'sinatra'
 require 'yajl'
 
 get '/' do
-  headers 'content-type' => 'application/vnd.sushihub+json'
+  headers 'content-type' => content_type
   Yajl.dump({
     :_links => [
-      {:rel => :users,  :href => '/users',  :profile => "/schema/user"},
-      {:rel => :nigiri, :href => '/nigiri', :profile => "/schema/nigiri"}
+      {:rel => :users,  :href => '/users',  :schema => "/schema/user"},
+      {:rel => :nigiri, :href => '/nigiri', :schema => "/schema/nigiri"}
     ]
   }, :pretty => true)
 end
 
-def content_profile(type)
+def content_type
   "application/vnd.sushihub+json; profile=/schema/#{type}"
 end
 
@@ -19,12 +19,12 @@ users = [
   {:id => 1, :login => 'sawyer',  :created_at => Time.utc(2004, 9, 22),
    :_links => [
      {:rel => :self,      :href => '/users/sawyer'},
-     {:rel => :favorites, :href => '/users/sawyer/favorites', :profile => "/schema/nigiri"}
+     {:rel => :favorites, :href => '/users/sawyer/favorites'}
    ]},
   {:id => 2, :login => 'faraday', :created_at => Time.utc(2004, 12, 22),
    :_links => [
      {:rel => :self,      :href => '/users/faraday'},
-     {:rel => :favorites, :href => '/users/faraday/favorites', :profile => "/schema/nigiri"}
+     {:rel => :favorites, :href => '/users/faraday/favorites'}
    ]}
 ]
 
@@ -40,12 +40,12 @@ nigiri = [
 ]
 
 get '/users' do
-  headers 'content-type' => content_profile(:user)
+  headers 'content-type' => content_type
   Yajl.dump users, :pretty => true
 end
 
 get '/users/:login' do
-  headers 'content-type' => content_profile(:user)
+  headers 'content-type' => content_type
   if hash = users.detect { |u| u[:login] == params[:login] }
     Yajl.dump hash, :pretty => true
   else
@@ -54,7 +54,7 @@ get '/users/:login' do
 end
 
 get '/users/:login/favorites' do
-  headers 'content-type' => content_profile(:nigiri)
+  headers 'content-type' => content_type
   case params[:login]
   when users[0][:login] then Yajl.dump([nigiri[0]], :pretty => true)
   when users[1][:login] then Yajl.dump([], :pretty => true)
@@ -63,12 +63,12 @@ get '/users/:login/favorites' do
 end
 
 get '/nigiri' do
-  headers 'content-type' => content_profile(:nigiri)
+  headers 'content-type' => content_type
   Yajl.dump nigiri, :pretty => true
 end
 
 get '/nigiri/:name' do
-  headers 'content-type' => content_profile(:nigiri)
+  headers 'content-type' => content_type
   if hash = nigiri.detect { |n| n[:name] == params[:name] }
     Yajl.dump hash, :pretty => true
   else
@@ -86,7 +86,7 @@ end
 get '/schema/:type' do
   path = File.expand_path("../#{params[:type]}.schema.json", __FILE__)
   if File.exist?(path)
-    headers 'content-type' => 'application/vnd.sushihub+json'
+    headers 'content-type' => content_type
     IO.read path
   else
     halt 404

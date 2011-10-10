@@ -71,7 +71,7 @@ module Sawyer
     def load_schemas(res)
       data = Yajl.load res.body, :symbolize_keys => true
       data[:_links].each do |link|
-        load_resource link
+        load_resource profile(link[:schema]), link
       end
     end
 
@@ -79,8 +79,8 @@ module Sawyer
     #           :rel - the relation of the link.
     #           :href - The String relative URL of the link.
     #          
-    def load_resource(options)
-      @relations[options[:rel]] = Resource.new(self, options)
+    def load_resource(profile, options)
+      @relations[options[:rel]] = Resource.new(profile, options)
     end
 
     def profile(url)
@@ -89,18 +89,20 @@ module Sawyer
   end
 
   class Profile
+    attr_reader :agent
+
     def initialize(agent, url)
       @agent = agent
       @url   = url
-      @type  = @verbs = @properties = nil
+      @type  = @relations = @properties = nil
     end
 
     def type
       @type || load_and_return(:@type)
     end
 
-    def verbs
-      @verbs || load_and_return(:@verbs)
+    def relations
+      @relations || load_and_return(:@relations)
     end
 
     def properties
@@ -114,21 +116,17 @@ module Sawyer
       end      
       data        = Yajl.load res.body, :symbolize_keys => true
       @type       = data[:type]
-      @verbs      = data[:verbs]
+      @relations  = data[:relations]
       @properties = data[:properties]
       instance_variable_get ivar
     end
   end
 
   class Resource
-    include FaradayWrapper
-    attr_reader :connection
-
-    def initialize(agent, options, profile = nil)
+    def initialize(profile, options)
       @relations  = {}
-      @agent      = agent
-      @connection = agent.connection
-      @profile    = profile || @agent.profile(options[:profile])
+      @profile    = profile
+      @agent      = profile.agent
     end
   end
 end

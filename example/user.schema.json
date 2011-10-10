@@ -1,6 +1,8 @@
 {
   "type": "object",
-  "verbs": ["GET"],
+  "relations": [
+    {"rel": "favorites", "schema": "/schema/nigiri"}
+  ],
   "properties": {
     "id": {
       "type": "integer",
@@ -16,17 +18,27 @@
       "readonly": true
     },
     "_links": {
-      "type": "object",
-      "properties": {
-        "self": {
-          "type": "string"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string",
+            "optional": true
+          },
+          "method": {
+            "type": "string",
+            "default": "get"
+          },
+          "schema": {
+            "type": "string",
+            "optional": true
+          }
         },
-        "favorites": {
-          "type": "string",
-          "profile": "/schema/user",
-          "verbs": ["GET", "POST"],
-          "optional": true
-        }
+        "additionalProperties": false
       },
       "additionalProperties": false,
       "readonly": true
