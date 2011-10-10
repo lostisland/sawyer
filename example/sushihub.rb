@@ -5,8 +5,8 @@ get '/' do
   headers 'content-type' => content_type
   Yajl.dump({
     :_links => [
-      {:rel => :users,  :href => '/users',  :schema => "/schema/user"},
-      {:rel => :nigiri, :href => '/nigiri', :schema => "/schema/nigiri"}
+      {:rel => :users,  :schema => "/schema/user"},
+      {:rel => :nigiri, :schema => "/schema/nigiri"}
     ]
   }, :pretty => true)
 end

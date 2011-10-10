@@ -14,6 +14,40 @@ much use.
 
 Sawyer knows what needs to be done.  He gets in there, assesses the
 situation, and figures out the next action.
+
+## What the What?
+
+The main idea is that each resource has a JSON Schema file detailing the
+available properties and relations.  The relations describe the schema,
+HTTP method, and href.  However, a relation is not accessible on a
+resource unless the resource also mentions that relation.  For instance,
+a schema of a user may describe these relations:
+
+``` javascript
+{ "relations":
+  [ {"rel": "self"}
+  , {"rel": "update", "method": "patch"}
+  , {"rel": "destroy", "method": "delete"}
+  , {"rel": "friends"}
+  , {"rel": "friends:create", "method": "post"}
+  ]
+}
+```
+
+Now, when you get a User, you may see these relations:
+
+``` javascript
+{ "_links":
+  [ {"rel": "self", "href": "/users/1"}
+  , {"rel": "update"}
+  , {"rel": "friends", "href": "/users/1/friends"}
+  , {"rel": "friends:create"}
+  ]
+}
+```
+
+The Sawyer agent should know that the 'destroy' relation is inaccessible
+for some reason in the application. 
   
 ## (Possible) Usage
 
