@@ -28,8 +28,8 @@ a schema of a user may describe these relations:
   [ {"rel": "self"}
   , {"rel": "update", "method": "patch"}
   , {"rel": "destroy", "method": "delete"}
-  , {"rel": "friends"}
-  , {"rel": "friends:create", "method": "post"}
+  , {"rel": "favorites"}
+  , {"rel": "favorites:create", "method": "post"}
   ]
 }
 ```
@@ -40,8 +40,8 @@ Now, when you get a User, you may see these relations:
 { "_links":
   [ {"rel": "self", "href": "/users/1"}
   , {"rel": "update"}
-  , {"rel": "friends", "href": "/users/1/friends"}
-  , {"rel": "friends:create"}
+  , {"rel": "favorites", "href": "/users/1/friends"}
+  , {"rel": "favorites:create"}
   ]
 }
 ```
@@ -61,11 +61,11 @@ agent = Sawyer::Agent.new
 agent.load 'https://api.sushihub.com'
 
 # salmon is all you need
-# mime: application/vnd.sushihub.nigiri+json
+# mime: application/vnd.sushihub+json
 # /nigiri/1
 sake = agent.nigiri.get 'sake'
 
-# mime: application/vnd.sushihub.user+json
+# mime: application/vnd.sushihub+json
 # /users/technoweenie
 user = agent.user.get 'technoweenie'
 
