@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
-  s.summary     = "RESTful User Agent"
+  s.summary     = "Secret User Agent of HTTP"
   s.description = "#{s.summary} built on Faraday"
 
   ## List the primary authors. If there are a bunch of authors, it's probably
