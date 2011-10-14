@@ -42,5 +42,14 @@ module Sawyer
         new name, href, method, schema_href
       end
     end
+
+    def inspect
+      %(#<%s @name=%s @schema=%s @href="%s %s">) % [
+        self.class,
+        name.inspect,
+        schema_href.inspect,
+        method, href
+      ]
+    end
   end
 end

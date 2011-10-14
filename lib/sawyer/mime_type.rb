@@ -96,5 +96,12 @@ module Sawyer
 
       instance_variable_get ivar
     end
+
+    def inspect
+      %(#<%s %s>) % [
+        self.class,
+        @string.inspect
+      ]
+    end
   end
 end
