@@ -63,17 +63,17 @@ module Sawyer
     
     # Public: Makes a request and loads a Resource based on the result.
     #
-    # rel  - A Sawyer::Relation or a String Relation name.  This determines
-    #        the URL and method used.
-    # body - Optional body to send to the request.  This will be prepared for
-    #        the request by #dump.
+    # relation - A Sawyer::Relation or a String Relation name.  This determines
+    #            the URL and method used.
+    # resource - Optional body to send to the request.  This will be prepared
+    #            for the request by #dump.
     #
     # Returns either a single Sawyer::Resource or an Array of Sawyer::Resources
-    def request(rel, body = nil, *args)
+    def request(relation, body = nil, *args)
       block = block_given? ? Proc.now : nil
-      rel  = relation(rel)
-      body = dump(body) if body
-      res  = rel.request(@faraday, body, *args, &block)
+      rel   = self.relation(relation)
+      body  = dump(body)
+      res   = rel.request(@faraday, body, *args, &block)
       rel.build load(res)
     end
 
@@ -100,6 +100,7 @@ module Sawyer
     #
     # Returns a String body for the request.
     def dump(data)
+      return nil if !data
       Yajl.dump data
     end
 
