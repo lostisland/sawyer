@@ -46,6 +46,24 @@ get '/users' do
   Yajl.dump users, :pretty => true
 end
 
+new_users = {}
+post '/users' do
+  app_type
+
+  hash = Yajl.load request.body.read, :symbolize_keys => true
+  new_users[hash[:login]] = hash
+  
+  headers "Location" => "/users/#{hash[:login]}"
+  status 201
+  Yajl.dump hash.update(
+    :id => 3,
+    :created_at => Time.now.utc.xmlschema,
+    :links => [
+      {:rel => :self, :href => "/users/#{hash[:login]}"}
+    ]
+  ), :pretty => true
+end
+
 get '/users/:login' do
   headers 'Content-Type' => app_type
   if hash = users.detect { |u| u[:login] == params[:login] }

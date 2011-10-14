@@ -2,6 +2,7 @@
   "type": "object",
   "relations": [
     {"rel": "all", "href": "/users"},
+    {"rel": "create", "href": "/users", "method": "post"},
     {"rel": "favorites", "schema": "/schema/nigiri"}
   ],
   "properties": {
