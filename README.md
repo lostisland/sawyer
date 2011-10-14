@@ -29,7 +29,7 @@ a schema of a user may describe these relations:
   , {"rel": "update", "method": "patch"}
   , {"rel": "destroy", "method": "delete"}
   , {"rel": "favorites"}
-  , {"rel": "favorites:create", "method": "post"}
+  , {"rel": "favorites/create", "method": "post"}
   ]
 }
 ```
@@ -41,7 +41,7 @@ Now, when you get a User, you may see these relations:
   [ {"rel": "self", "href": "/users/1"}
   , {"rel": "update"}
   , {"rel": "favorites", "href": "/users/1/friends"}
-  , {"rel": "favorites:create"}
+  , {"rel": "favorites/create"}
   ]
 }
 ```
@@ -50,4 +50,14 @@ The Sawyer agent should know that the 'destroy' relation is inaccessible
 for some reason in the application. 
   
 [faraday]: https://github.com/technoweenie/faraday
+
+## Example?
+
+See [example/client.rb](https://github.com/technoweenie/sawyer/blob/master/example/client.rb)
+
+    # start the sinatra server
+    $ ruby -rubygems ./example/server
+
+    # run the client
+    $ ruby -rubygems ./example/client
 
