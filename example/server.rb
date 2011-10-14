@@ -20,12 +20,14 @@ users = [
   {:id => 1, :login => 'sawyer',  :created_at => Time.utc(2004, 9, 22),
    :_links => [
      {:rel => :self,      :href => '/users/sawyer'},
-     {:rel => :favorites, :href => '/users/sawyer/favorites'}
+     {:rel => :favorites, :href => '/users/sawyer/favorites'},
+     {:rel => 'favorites/create'}
    ]},
   {:id => 2, :login => 'faraday', :created_at => Time.utc(2004, 12, 22),
    :_links => [
      {:rel => :self,      :href => '/users/faraday'},
-     {:rel => :favorites, :href => '/users/faraday/favorites'}
+     {:rel => :favorites, :href => '/users/faraday/favorites'},
+     {:rel => 'favorites/create'}
    ]}
 ]
 
@@ -59,7 +61,9 @@ post '/users' do
     :id => 3,
     :created_at => Time.now.utc.xmlschema,
     :links => [
-      {:rel => :self, :href => "/users/#{hash[:login]}"}
+      {:rel => :self, :href => "/users/#{hash[:login]}"},
+      {:rel => :favorites, :href => "/users/#{hash[:login]}/favorites"},
+      {:rel => 'favorites/create'}
     ]
   ), :pretty => true
 end

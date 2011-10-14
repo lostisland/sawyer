@@ -3,7 +3,8 @@
   "relations": [
     {"rel": "all", "href": "/users"},
     {"rel": "create", "href": "/users", "method": "post"},
-    {"rel": "favorites", "schema": "/schema/nigiri"}
+    {"rel": "favorites", "schema": "/schema/nigiri"},
+    {"rel": "favorites/create", "method": "post"}
   ],
   "properties": {
     "id": {

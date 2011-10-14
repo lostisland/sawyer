@@ -71,3 +71,6 @@ res = create_user_rel.request(faraday, Yajl.dump(:login => 'booya'))
 puts "#{res.status} #{res.headers['location']}"
 puts res.body
 
+puts "ADD A FAVORITE"
+
+
