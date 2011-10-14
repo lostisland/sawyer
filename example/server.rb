@@ -50,6 +50,10 @@ end
 
 new_users = {}
 post '/users' do
+  if env['CONTENT_TYPE'].to_s !~ /json/i
+    halt 400, "Needs JSON"
+  end
+
   app_type
 
   hash = Yajl.load request.body.read, :symbolize_keys => true
