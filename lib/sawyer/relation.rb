@@ -13,7 +13,10 @@ module Sawyer
       when Array
         options.map { |hash| from(hash) }
       when Hash
-        new options[:name], options[:href], options[:method], options[:schema_href]
+        new options[:rel] || options[:name],
+          options[:href],
+          options[:method],
+          options[:schema] || options[:schema_href]
       else
         raise ArgumentError, "Cannot parse #{options.inspect}"
       end
