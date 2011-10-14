@@ -12,7 +12,7 @@ module Sawyer
       data[:href] = href.to_s if href
       new(data)
     end
-
+    
     attr_reader   :href
     attr_accessor :all
 
@@ -23,13 +23,13 @@ module Sawyer
       @type = @relations = @properties = nil
     end
 
-    # Reads raw data from a request into a Sawyer::Resource.
+    # Builds resources with the given data with this Schema.
     #
-    # json - A String.
+    # data - Either a Hash of properties, or an Array of Hashes
     #
     # Returns either a single Sawyer::Resource or an Array of Sawyer::Resources
-    def read(json)
-      Resource.read(self, json)
+    def build(data)
+      Resource.build self, data
     end
 
     # Public: Gets the JSON Schema type.

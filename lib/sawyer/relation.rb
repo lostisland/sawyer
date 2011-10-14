@@ -55,7 +55,7 @@ module Sawyer
       @schema_href = schema
     end
 
-    # Makes an HTTP request with the options set in this relation.
+    # Public: Makes an HTTP request with the options set in this relation.
     #
     # faraday - A Faraday::Connection.
     # *args   - One or more optional arguments for
@@ -65,6 +65,16 @@ module Sawyer
     def request(faraday, *args)
       block = block_given? ? Proc.new : nil
       faraday.send @method, @href, *args, &block
+    end
+
+    # Builds resources with the given data with this Relation's Schema.
+    #
+    # data - Either a Hash of properties, or an Array of Hashes
+    #
+    # Returns either a single Sawyer::Resource or an Array of Sawyer::Resources
+    def build(data)
+      raise Sawyer::Error, "No schema for this relation: #{inspect}" unless @schema
+      @schema.build data
     end
 
     # Public: Relations from a resource only give enough information to

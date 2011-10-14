@@ -18,4 +18,5 @@ end
   relation
   schema
   resource
+  agent
 ).each { |f| require File.expand_path("../sawyer/#{f}", __FILE__) }

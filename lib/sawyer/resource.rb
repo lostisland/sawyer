@@ -1,15 +1,12 @@
-require 'yajl'
-
 module Sawyer
   class Resource
     # Reads raw data from a request into a Sawyer::Resource.
     #
     # schema - A Sawyer::Schema instance.
-    # json   - A String.
+    # data   - Either a Hash of properties, or an Array of Hashes
     #
     # Returns either a single Sawyer::Resource or an Array of Sawyer::Resources
-    def self.read(schema, json)
-      data = Yajl.load(json, :symbolize_keys => true)
+    def self.build(schema, data)
       case data
       when Array then data.map! { |prop| new(schema, prop) }
       when Hash  then new(schema, data)

@@ -6,8 +6,8 @@ module Sawyer
       @schema = Sawyer::Schema.read \
         IO.read(File.expand_path("../../example/user.schema.json", __FILE__))
       yield @schema if block_given?
-      @resource = @schema.read \
-        %({"id": 1, "login": "bob", "_links":[{"rel":"fave", "href":"/users/1/faves"}]})
+      @resource = Resource.new @schema,
+        :id => 1, :login => 'bob', :_links => [{:rel => 'fave', :href => '/users/1/faves'}]
     end
 
     def test_knows_schema

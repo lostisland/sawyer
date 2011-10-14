@@ -3,68 +3,40 @@ require 'faraday'
 require 'pp'
 
 endpoint = "http://localhost:4567/"
-faraday  = Faraday.new \
-  :url => endpoint,
-  :headers => {'content-type' => 'application/json'}
-
-res  = faraday.get '/'
-data = Yajl.load(res.body, :symbolize_keys => true)
-
-schemas = {}
-root    = {}
-
-# the root endpoint links to the top level relations and their schema
-Sawyer::Relation.from(data[:_links]).each do |rel|
-  # load the schema, set the default href
-  res = faraday.get rel.schema_href
-  schemas[rel.schema_href] ||= begin
-    schema   = Sawyer::Schema.read(res.body, res.env[:url])
-    schema.all = schemas
-    root_rel = root[rel.name] = schema.relations['all']
-
-    schema.relations.each do |key, schema_rel|
-      schema_rel.schema = schema
-      next if key == 'all' || schema_rel.href != root_rel.href
-      root["#{rel.name}/#{key}"] = schema_rel
-    end
-
-    root_rel.schema = schema
-  end
+agent    = Sawyer::Agent.new(endpoint) do |http|
+  http.headers['content-type'] = 'application/json'
 end
+puts agent.inspect
+puts
 
 puts "ROOT RELATIONS"
-pp root
+pp agent.relations
 puts
 
 puts "LISTING USERS"
-user_rel = root['users']
+user_rel = agent.relation('users')
 
 puts user_rel.inspect
 puts user_rel.schema.inspect
 puts
 
-res = user_rel.request(faraday)
-
-user_rel.schema.read(res.body).each do |user|
+agent.request(user_rel).each do |user|
   fav_rel = user.relations['favorites']
-  res = fav_rel.request(faraday)
 
   puts "#{user[:login]} favorites:"
   puts fav_rel.schema.inspect
-  fav_rel.schema.read(res.body).each do |sushi|
+  agent.request(fav_rel).each do |sushi|
     puts "- #{sushi.inspect})"
   end
   puts
 end
 
 puts "CREATING USER"
-create_user_rel = root["users/create"]
+create_user_rel = agent.relation("users/create")
 
 puts create_user_rel.inspect
 
-res = create_user_rel.request(faraday, Yajl.dump(:login => 'booya'))
-puts "#{res.status} #{res.headers['location']}"
-created = create_user_rel.schema.read(res.body)
+created = agent.request(create_user_rel, :login => 'booya')
 puts created.inspect
 puts
 
