@@ -46,12 +46,21 @@ module Sawyer
       end
     end
 
+    attr_reader :name, :href, :method, :schema_href
+
+    def initialize(name, href, method, schema)
+      @name   = name
+      @href   = href
+      @method = (method || 'get').to_s.downcase
+      @schema_href = schema
+    end
+
     def inspect
       %(#<%s @name=%s @schema=%s @href="%s %s">) % [
         self.class,
-        name.inspect,
-        schema_href.inspect,
-        method, href
+        @name.inspect,
+        @schema_href.inspect,
+        @method, @href || '?'
       ]
     end
   end

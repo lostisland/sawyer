@@ -32,7 +32,7 @@ module Sawyer
       arr.each_with_index do |hash, i|
         rel = rels[i]
         hash.each do |key, value|
-          assert_equal value, rel.send(key)
+          assert_equal value.downcase, rel.send(key)
         end
       end
       assert_equal arr.size, rels.size
