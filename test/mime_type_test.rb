@@ -1,8 +1,7 @@
-require 'test/unit'
-require File.expand_path('../../lib/sawyer/mime_type', __FILE__)
+require File.expand_path('../helper', __FILE__)
 
 module Sawyer
-  class MimeTypeTest < Test::Unit::TestCase
+  class MimeTypeTest < TestCase
     def test_parses_simple_type
       mime = MimeType.new('text/plain')
       assert_equal 'text',  mime.media_type
@@ -16,7 +15,7 @@ module Sawyer
       assert_equal 'text',  mime.media_type
       assert_equal 'plain', mime.sub_type
       assert_equal '',      mime.suffix
-      assert_equal 'utf-8', mime.options[:charset]
+      assert_equal 'utf-8', mime.options['charset']
       assert !mime.vendor?
     end
 
@@ -25,7 +24,7 @@ module Sawyer
       assert_equal 'application', mime.media_type
       assert_equal 'vnd.abc',     mime.sub_type
       assert_equal 'json',        mime.suffix
-      assert_equal 'utf-8',       mime.options[:charset]
+      assert_equal 'utf-8',       mime.options['charset']
       assert_equal 'abc',         mime.vendor
       assert mime.vendor?
     end
