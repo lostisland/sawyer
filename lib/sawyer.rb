@@ -15,4 +15,5 @@ end
 
 %w(
   mime_type
+  relation
 ).each { |f| require File.expand_path("../sawyer/#{f}", __FILE__) }
