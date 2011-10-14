@@ -1,11 +1,11 @@
 # Sawyer
 
-Sawyer is an experimental RESTful user agent built on top of
+Sawyer is an experimental secret user agent built on top of
 [Faraday][faraday].
 
 ![](http://www.lost-isle.net/images/s5/09x01.jpg)
 
-Think of Faraday as the nerdy scientist behind a REST API.  Sure, he
+Think of Faraday as the nerdy scientist behind an HTTP API.  Sure, he
 knows the technical details of how to communicate with an application.
 But he also gets overly obsessive about alternate timelines to be of
 much use.
