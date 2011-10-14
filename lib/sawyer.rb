@@ -17,4 +17,5 @@ end
   mime_type
   relation
   schema
+  resource
 ).each { |f| require File.expand_path("../sawyer/#{f}", __FILE__) }

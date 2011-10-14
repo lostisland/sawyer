@@ -19,6 +19,7 @@ Sawyer::Relation.from(data[:_links]).each do |rel|
   res = faraday.get rel.schema_href
   schemas[rel.schema_href] ||= begin
     schema   = Sawyer::Schema.read(res.body, res.env[:url])
+    schema.all = schemas
     root_rel = root[rel.name] = schema.relations['all']
 
     schema.relations.each do |key, schema_rel|
@@ -44,20 +45,14 @@ puts
 
 res = user_rel.request(faraday)
 
-Yajl.load(res.body, :symbolize_keys => true).each do |user|
-  # load the given rels on this resource
-  rels = Sawyer::Relation.from(user[:_links]).inject({}) do |map, rel|
-    # merge the rel with the top-level rel that we're accessing
-    map.update(rel.name => rel.merge(user_rel.schema, schemas))
-  end
-  
-  fav_rel = rels['favorites']
+user_rel.schema.read(res.body).each do |user|
+  fav_rel = user.relations['favorites']
   res = fav_rel.request(faraday)
 
   puts "#{user[:login]} favorites:"
   puts fav_rel.schema.inspect
-  Yajl.load(res.body, :symbolize_keys => true).each do |sushi|
-    puts "- #{sushi[:name]} (#{sushi[:fish]})"
+  fav_rel.schema.read(res.body).each do |sushi|
+    puts "- #{sushi.inspect})"
   end
   puts
 end
@@ -69,7 +64,9 @@ puts create_user_rel.inspect
 
 res = create_user_rel.request(faraday, Yajl.dump(:login => 'booya'))
 puts "#{res.status} #{res.headers['location']}"
-puts res.body
+created = create_user_rel.schema.read(res.body)
+puts created.inspect
+puts
 
 puts "ADD A FAVORITE"
 

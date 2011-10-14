@@ -2,23 +2,22 @@ module Sawyer
   class Relation
     # Public: Parses the input into one or more Relation objects.
     #
-    # options - Either a Hash, an Array of Hashes, or a String Link
-    #           header.
+    # links - Either a Hash, an Array of Hashes, or a String Link header.
     #
     # Returns a single Relation if a Hash is given, or an Array of Relations
-    def self.from(options = {})
-      case options
+    def self.from(links = {})
+      case links
       when String
-        parse_link_header(options)
+        parse_link_header(links)
       when Array
-        options.map { |hash| from(hash) }
+        links.map { |link| from(link) }
       when Hash
-        new options[:rel] || options[:name],
-          options[:href],
-          options[:method],
-          options[:schema] || options[:schema_href]
+        new links[:rel] || links[:name],
+          links[:href],
+          links[:method],
+          links[:schema] || links[:schema_href]
       else
-        raise ArgumentError, "Cannot parse #{options.inspect}"
+        raise ArgumentError, "Cannot parse #{links.inspect}"
       end
     end
 
@@ -48,7 +47,7 @@ module Sawyer
 
     attr_accessor :schema, :name, :href, :method, :schema_href
 
-    def initialize(name, href, method, schema)
+    def initialize(name, href = nil, method = nil, schema = nil)
       @schema = nil
       @name   = name
       @href   = href
@@ -86,7 +85,7 @@ module Sawyer
     #
     #     rel = Sawyer::Relation.from(data['_links'])
     #     rel.method # => nil
-    #     rel.merge(schema.relations['update'])
+    #     rel.merge(schema)
     #     rel.method # => 'patch'
     #
     # rel - A top-level Sawyer::Schema.

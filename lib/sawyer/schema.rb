@@ -13,12 +13,23 @@ module Sawyer
       new(data)
     end
 
-    attr_reader :href
+    attr_reader   :href
+    attr_accessor :all
 
     def initialize(data = {})
+      @all  = data.delete(:all) || {}
       @href = data.delete(:href)
       @data = data
       @type = @relations = @properties = nil
+    end
+
+    # Reads raw data from a request into a Sawyer::Resource.
+    #
+    # json - A String.
+    #
+    # Returns either a single Sawyer::Resource or an Array of Sawyer::Resources
+    def read(json)
+      Resource.read(self, json)
     end
 
     # Public: Gets the JSON Schema type.

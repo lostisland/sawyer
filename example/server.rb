@@ -60,7 +60,7 @@ post '/users' do
   Yajl.dump hash.update(
     :id => 3,
     :created_at => Time.now.utc.xmlschema,
-    :links => [
+    :_links => [
       {:rel => :self, :href => "/users/#{hash[:login]}"},
       {:rel => :favorites, :href => "/users/#{hash[:login]}/favorites"},
       {:rel => 'favorites/create'}
