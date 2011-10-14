@@ -1,7 +1,7 @@
 {
   "type": "object",
   "relations": [
-    {"rel": "list", "href": "/users"},
+    {"rel": "all", "href": "/users"},
     {"rel": "favorites", "schema": "/schema/nigiri"}
   ],
   "properties": {

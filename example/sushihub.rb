@@ -6,8 +6,8 @@ get '/' do
 
   Yajl.dump({
     :_links => [
-      {:rel => :users,  :schema => "/schema/user"},
-      {:rel => :nigiri, :schema => "/schema/nigiri"}
+      {:rel => 'users',  :schema => "/schema/user"},
+      {:rel => 'nigiri', :schema => "/schema/nigiri"}
     ]
   }, :pretty => true)
 end

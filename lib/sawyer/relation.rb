@@ -1,5 +1,5 @@
 module Sawyer
-  class Relation < Struct.new(:name, :href, :method, :schema_href)
+  class Relation
     # Public: Parses the input into one or more Relation objects.
     #
     # options - Either a Hash, an Array of Hashes, or a String Link
@@ -46,20 +46,66 @@ module Sawyer
       end
     end
 
-    attr_reader :name, :href, :method, :schema_href
+    attr_accessor :schema, :name, :href, :method, :schema_href
 
     def initialize(name, href, method, schema)
+      @schema = nil
       @name   = name
       @href   = href
       @method = (method || 'get').to_s.downcase
       @schema_href = schema
     end
 
+    # Makes an HTTP request with the options set in this relation.
+    #
+    # faraday - A Faraday::Connection.
+    # *args   - One or more optional arguments for
+    #           Faraday::Connection#{method}
+    #
+    # Returns a Faraday::Response
+    def request(faraday, *args)
+      block = block_given? ? Proc.new : nil
+      faraday.send @method, @href, *args, &block
+    end
+
+    # Public: Relations from a resource only give enough information to
+    # identify the Relation.  This merges those incomplete Relations with the
+    # properties of a Relation given in a Schema.
+    #
+    # Example: A resource may define an 'update' Relation in the schema:
+    #
+    #     {"rel": "update", "href": "/users/{id}", "method": "patch"}
+    #
+    # When fetching the resource directly, it only needs to specify the
+    # actual URL.
+    #
+    #     {"rel": "update", "href": "/users/123"}
+    #
+    # After parsing a relation from the resource, be sure to merge it
+    # with the schema relation.
+    #
+    #     rel = Sawyer::Relation.from(data['_links'])
+    #     rel.method # => nil
+    #     rel.merge(schema.relations['update'])
+    #     rel.method # => 'patch'
+    #
+    # rel - A top-level Sawyer::Schema.
+    #
+    # Returns this same Sawyer::Relation.
+    def merge(schema, top_level_schemas = {})
+      if top_rel = schema.relations[@name]
+        @method ||= top_rel.method
+        @href   ||= top_rel.href
+        @schema ||= top_rel.schema || top_level_schemas[top_rel.schema_href]
+      end
+      self
+    end
+
     def inspect
       %(#<%s @name=%s @schema=%s @href="%s %s">) % [
         self.class,
         @name.inspect,
-        @schema_href.inspect,
+        (@schema ? @schema.href : @schema_href).inspect,
         @method, @href || '?'
       ]
     end

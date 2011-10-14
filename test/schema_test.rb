@@ -13,8 +13,8 @@ module Sawyer
     end
 
     def test_parses_relations
-      assert_equal '/users', @schema.relations['list'].href
-      assert_equal 'get',    @schema.relations['list'].method
+      assert_equal '/users', @schema.relations['all'].href
+      assert_equal 'get',    @schema.relations['all'].method
       assert_equal '/schema/nigiri', @schema.relations['favorites'].schema_href
       assert_equal 'get', @schema.relations['favorites'].method
       assert_nil @schema.relations['favorites'].href

@@ -7,12 +7,16 @@ module Sawyer
     # json - String JSON content.
     #
     # Returns a Sawyer::Schema
-    def self.read(json)
-      new Yajl.load(json, :symbolize_keys => true)
+    def self.read(json, href = nil)
+      data = Yajl.load(json, :symbolize_keys => true)
+      data[:href] = href.to_s if href
+      new(data)
     end
 
+    attr_reader :href
+
     def initialize(data = {})
-      @url  = data.delete(:url)
+      @href = data.delete(:href)
       @data = data
       @type = @relations = @properties = nil
     end
@@ -65,8 +69,8 @@ module Sawyer
 
     def inspect
       loaded? ?
-        %(#<#{self.class} @url=#{@url.inspect} @relations=#{@relations.keys.inspect}>) :
-        %(#<#{self.class} @url=#{@url.inspect} (unloaded)>)
+        %(#<#{self.class} @href=#{@href.inspect} @relations=#{@relations.keys.inspect}>) :
+        %(#<#{self.class} @href=#{@href.inspect} (unloaded)>)
     end
   end
 end
