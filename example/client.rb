@@ -14,13 +14,13 @@ pp agent.relations
 puts
 
 puts "LISTING USERS"
-user_rel = agent.relation('users')
+users_rel = agent.relation('users')
 
-puts user_rel.inspect
-puts user_rel.schema.inspect
+puts users_rel.inspect
+puts users_rel.schema.inspect
 puts
 
-agent.request(user_rel).each do |user|
+agent.request(users_rel).each do |user|
   fav_rel = user.relations['favorites']
 
   puts "#{user[:login]} favorites:"
