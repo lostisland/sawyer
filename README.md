@@ -49,54 +49,5 @@ Now, when you get a User, you may see these relations:
 The Sawyer agent should know that the 'destroy' relation is inaccessible
 for some reason in the application. 
   
-## (Possible) Usage
-
-``` ruby
-# SushiHub is a an example REST API -- A social network for Sushi
-# Enthusiasts
-
-# setup the auth info and the API endpoint so we can grab the schema 
-# info and initial actions.
-agent = Sawyer::Agent.new
-agent.load 'https://api.sushihub.com'
-
-# salmon is all you need
-# mime: application/vnd.sushihub+json
-# /nigiri/1
-sake = agent.nigiri.get 'sake'
-
-# mime: application/vnd.sushihub+json
-# /users/technoweenie
-user = agent.user.get 'technoweenie'
-
-# user has "favorites:create" rel with method=POST
-user.favorites.create sake
-```
-
-## Implemented
-
-This library is experimental.  Don't expect there to be tests, or for
-anything to work.  APIs will change.  Sawyer may even be a complete
-failure.  Whatever happened, happened.
-
-```ruby
-# tested on ruby 1.9.2 with these gems: sinatra, faraday, yajl-ruby
-# bundler coming soon, lol
-# run example/sushihub.rb to start the example app
-#
-# start a sawyer console with: `irb -r ./lib/sawyer`
-require 'pp'
-agent = Sawyer::Agent.new 'http://localhost:4567'
-
-puts agent.inspect
-
-pp agent.schemas.keys
-puts agent.schemas['/schema/user'].inspect
-pp agent.schemas['/schema/user'].properties
-
-pp agent.relations.keys
-pp agent.relations['users']
-```
-
 [faraday]: https://github.com/technoweenie/faraday
 
