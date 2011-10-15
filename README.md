@@ -65,6 +65,7 @@ See [example/client.rb](https://github.com/technoweenie/sawyer/blob/master/examp
 
 * Resource schema validation
 * Add a Sawyer::Response that gets returned from #request calls.
+* Add the concept of errors, the world isn't perfect.
 * Figure out if `Sawyer::MimeType` is even useful.
 * More real-world examples to push Sawyer to its limit.
 
