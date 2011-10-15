@@ -20,7 +20,7 @@ puts users_rel.inspect
 puts users_rel.schema.inspect
 puts
 
-agent.request(users_rel).each do |user|
+users_rel.request.each do |user|
   fav_rel = user.relations['favorites']
 
   puts "#{user[:login]} favorites:"
