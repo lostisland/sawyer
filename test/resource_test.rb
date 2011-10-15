@@ -3,7 +3,7 @@ require File.expand_path('../helper', __FILE__)
 module Sawyer
   class ResourceTest < TestCase
     def setup
-      @agent  = FakeAgent.new({})
+      @agent  = FakeAgent.new
       @schema = Sawyer::Schema.read @agent,
         IO.read(File.expand_path("../../example/user.schema.json", __FILE__))
       yield @schema if block_given?
