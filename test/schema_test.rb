@@ -3,8 +3,8 @@ require File.expand_path('../helper', __FILE__)
 module Sawyer
   class SchemaTest < TestCase
     def setup
-      @schema = Sawyer::Schema.read(
-        IO.read(File.expand_path("../../example/user.schema.json", __FILE__)))
+      @schema = Sawyer::Schema.read FakeAgent.new({}),
+        IO.read(File.expand_path("../../example/user.schema.json", __FILE__))
     end
 
     def test_parses_properties

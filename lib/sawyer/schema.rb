@@ -4,23 +4,28 @@ module Sawyer
   class Schema
     # Public: Reads a schema from the given JSON.
     #
-    # json - String JSON content.
+    # agent - The Sawyer::Agent managing this session.
+    # json  - String JSON content.
     #
     # Returns a Sawyer::Schema
-    def self.read(json, href = nil)
+    def self.read(agent, json, href = nil)
       data = Yajl.load(json, :symbolize_keys => true)
       data[:href] = href.to_s if href
-      new(data)
+      new(agent, data)
     end
     
-    attr_reader   :href
-    attr_accessor :all
+    attr_reader   :agent, :href
 
-    def initialize(data = {})
-      @all  = data.delete(:all) || {}
-      @href = data.delete(:href)
-      @data = data
-      @type = @relations = @properties = nil
+    def initialize(agent, data = {})
+      @agent = agent
+      @all   = data.delete(:all) || {}
+      @href  = data.delete(:href)
+      @data  = data
+      @type  = @relations = @properties = nil
+    end
+
+    def all
+      @agent.schemas
     end
 
     # Builds resources with the given data with this Schema.

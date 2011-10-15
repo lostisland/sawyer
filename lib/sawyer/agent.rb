@@ -54,10 +54,8 @@ module Sawyer
       return schema(href.schema_href) if href.respond_to?(:schema_href)
       load_root if !@schemas
       @schemas[href] ||= begin
-        res    = @faraday.get(href)
-        schema = Sawyer::Schema.read(res.body, res.env[:url])
-        schema.all = @schemas
-        schema
+        res = @faraday.get(href)
+        Sawyer::Schema.read(self, res.body, res.env[:url])
       end
     end
     
@@ -73,7 +71,7 @@ module Sawyer
       block = block_given? ? Proc.now : nil
       rel   = self.relation(relation)
       body  = dump(body)
-      res   = rel.request(@faraday, body, *args, &block)
+      res   = @faraday.send(rel.method, rel.href, body, *args, &block)
       rel.build load(res)
     end
 

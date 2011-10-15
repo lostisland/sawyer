@@ -3,7 +3,8 @@ require File.expand_path('../helper', __FILE__)
 module Sawyer
   class ResourceTest < TestCase
     def setup
-      @schema = Sawyer::Schema.read \
+      @agent  = FakeAgent.new({})
+      @schema = Sawyer::Schema.read @agent,
         IO.read(File.expand_path("../../example/user.schema.json", __FILE__))
       yield @schema if block_given?
       @resource = Resource.new @schema,
@@ -30,7 +31,7 @@ module Sawyer
       other_schema = nil
       setup do |schema|
         rel = schema.relations['fave'] = Sawyer::Relation.new("fave", 'href', 'post')
-        rel.schema = other_schema = Sawyer::Schema.read(
+        rel.schema = other_schema = Sawyer::Schema.read(@agent,
           IO.read(File.expand_path("../../example/nigiri.schema.json", __FILE__)))
       end
 

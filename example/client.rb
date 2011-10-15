@@ -25,7 +25,8 @@ agent.request(users_rel).each do |user|
 
   puts "#{user[:login]} favorites:"
   puts fav_rel.schema.inspect
-  agent.request(fav_rel).each do |sushi|
+
+  fav_rel.request.each do |sushi|
     puts "- #{sushi.inspect})"
   end
   puts
@@ -36,7 +37,7 @@ create_user_rel = agent.relation("users/create")
 
 puts create_user_rel.inspect
 
-created = agent.request(create_user_rel, :login => 'booya')
+created = create_user_rel.request(:login => 'booya')
 puts created.inspect
 puts
 

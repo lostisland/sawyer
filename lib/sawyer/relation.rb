@@ -57,14 +57,19 @@ module Sawyer
 
     # Public: Makes an HTTP request with the options set in this relation.
     #
-    # faraday - A Faraday::Connection.
     # *args   - One or more optional arguments for
     #           Faraday::Connection#{method}
     #
     # Returns a Faraday::Response
-    def request(faraday, *args)
-      block = block_given? ? Proc.new : nil
-      faraday.send @method, @href, *args, &block
+    def request(*args)
+      raise Sawyer::Error, "No schema for this relation: #{inspect}" unless @schema
+
+      if agent = @schema.agent
+        block = block_given? ? Proc.new : nil
+        agent.request self, *args, &block
+      else
+        raise Sawyer::Error, "This schema has no agent: #{@schema.inspect}"
+      end
     end
 
     # Builds resources with the given data with this Relation's Schema.
