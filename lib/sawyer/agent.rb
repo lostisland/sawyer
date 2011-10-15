@@ -2,6 +2,18 @@ module Sawyer
   class Agent
     attr_reader :endpoint, :faraday
 
+    # Determines what property of a resource contains the Array of links to
+    # be processed.  Default: :_links
+    #
+    # Returns a Symbol.
+    attr_accessor :links_property
+
+    # Determines the default Relation name in a Schema that signifies the
+    # top level collection of the resource.  Default: "all"
+    #
+    # Returns a String
+    attr_reader :default_relation
+
     # Initializes an Agent.
     #
     # endpoint - String URL to start at.
@@ -10,6 +22,9 @@ module Sawyer
     def initialize(endpoint, faraday = nil)
       @faraday = faraday || Faraday.new
       @faraday.url_prefix = (@endpoint = endpoint)
+      
+      @links_property       = :_links
+      self.default_relation = "all"
 
       @schemas = @relations = nil
 
@@ -102,6 +117,15 @@ module Sawyer
       Yajl.dump data
     end
 
+    # Sets the default Relation.
+    #
+    # s - The String name of the Relation.
+    #
+    # Returns the frozen String name.
+    def default_relation=(s)
+      @default_relation = s.to_s.freeze
+    end
+
     # Loads the root endpoint for the top level Schemas and Relations.
     #
     # Returns nothing.
@@ -110,13 +134,13 @@ module Sawyer
       @schemas   = {}
       res  = @faraday.get @endpoint
       data = load(res)
-      Relation.from(data[:_links]).each do |rel|
+      Relation.from(data[@links_property]).each do |rel|
         sch = schema(rel.schema_href)
-        root_rel = @relations[rel.name] = sch.relations['all']
+        root_rel = @relations[rel.name] = sch.relations[sch.default_relation]
         root_rel.schema = sch
         sch.relations.each do |key, schema_rel|
           schema_rel.schema = sch
-          next if key == 'all' || schema_rel.href != root_rel.href
+          next if key == sch.default_relation || schema_rel.href != root_rel.href
           @relations["#{rel.name}/#{key}"] = schema_rel
         end
       end

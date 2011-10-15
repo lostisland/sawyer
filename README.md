@@ -61,3 +61,10 @@ See [example/client.rb](https://github.com/technoweenie/sawyer/blob/master/examp
     # run the client
     $ ruby -rubygems ./example/client
 
+## TODO
+
+* Resource schema validation
+* Add a Sawyer::Response that gets returned from #request calls.
+* Figure out if `Sawyer::MimeType` is even useful.
+* More real-world examples to push Sawyer to its limit.
+

@@ -14,21 +14,19 @@ module Sawyer
       new(agent, data)
     end
     
-    attr_reader   :agent, :href
+    attr_reader :agent, :href
+    attr_writer :links_property
 
+    # agent - The Sawyer::Agent managing this session.
+    # data  - A Hash parsed from a JSON Schema.
     def initialize(agent, data = {})
       @agent = agent
-      @all   = data.delete(:all) || {}
       @href  = data.delete(:href)
       @data  = data
-      @type  = @relations = @properties = nil
+      @type  = @relations = @properties = @links_property = @default_relation = nil
     end
 
-    def all
-      @agent.schemas
-    end
-
-    # Builds resources with the given data with this Schema.
+    # Public: Builds resources with the given data with this Schema.
     #
     # data - Either a Hash of properties, or an Array of Hashes
     #
@@ -63,6 +61,39 @@ module Sawyer
     # Returns a Boolean
     def loaded?
       !@data
+    end
+
+    # Public: Gets all of the loaded Schemas for this API.
+    #
+    # Returns a Hash of String URL keys and Sawyer::Schema values.
+    def all
+      @agent.schemas
+    end
+
+    # Determines what property of a resource contains the Array of links to
+    # be processed.  Default: Sawyer::Agent#links_property
+    #
+    # Returns a Symbol.
+    def links_property
+      @links_property || @agent.links_property
+    end
+
+    # Determines the default Relation name in a Schema that signifies the
+    # top level collection of the resource.  Default:
+    # Sawyer::Agent#default_relation
+    #
+    # Returns a String
+    def default_relation
+      @default_relation || @agent.default_relation
+    end
+
+    # Sets the default Relation.
+    #
+    # s - The String name of the Relation.
+    #
+    # Returns the frozen String name.
+    def default_relation=(s)
+      @default_relation = s.to_s.freeze
     end
 
     # Parses the JSON Schema data.

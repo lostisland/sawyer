@@ -29,7 +29,7 @@ module Sawyer
       @schema     = schema
       @properties = properties
 
-      self.relations = @properties.delete(:_links)
+      self.relations = @properties.delete(@schema.links_property)
     end
 
     # Parses the given links into Relations.
