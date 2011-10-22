@@ -3,14 +3,14 @@
 Sawyer is an experimental secret user agent built on top of
 [Faraday][faraday].
 
-![](http://www.lost-isle.net/images/s5/09x01.jpg)
+![](http://techno-weenie.net/sawyer/images/faraday.jpeg)
 
 Think of Faraday as the nerdy scientist behind an HTTP API.  Sure, he
 knows the technical details of how to communicate with an application.
 But he also gets overly obsessive about alternate timelines to be of
 much use.
 
-![](http://cdn.tvovermind.com/wp-content/uploads/2009/03/lafleur-296x3001.jpg)
+![](http://techno-weenie.net/sawyer/images/sawyer.jpeg)
 
 Sawyer knows what needs to be done.  He gets in there, assesses the
 situation, and figures out the next action.
