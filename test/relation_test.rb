@@ -16,7 +16,7 @@ module Sawyer
         'self' => {:_href => '/users/1', :_method => 'post'}
       }
 
-      rels = Sawyer::Relation.from_links(index)
+      rels = Sawyer::Relation.from_links(nil, index)
 
       assert_equal 1, rels.size
       assert_equal [:self], rels.keys
@@ -27,9 +27,10 @@ module Sawyer
     end
 
     def test_builds_relations_from_nil
-      rels = Sawyer::Relation.from_links nil
+      rels = Sawyer::Relation.from_links nil, nil
       assert_equal 0,  rels.size
       assert_equal [], rels.keys
     end
   end
 end
+

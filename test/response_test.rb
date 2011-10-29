@@ -16,7 +16,7 @@ module Sawyer
         end
       end
 
-      @res = Sawyer::Response.new(@conn.get('/'))
+      @res = Sawyer::Response.new(nil, @conn.get('/'))
     end
 
     def test_gets_status

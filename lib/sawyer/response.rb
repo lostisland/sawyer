@@ -1,18 +1,23 @@
+require 'yajl'
+
 module Sawyer
   class Response
-    attr_reader :status,
+    attr_reader :agent,
+      :status,
       :headers,
       :data,
       :relations
 
     # Builds a Response after a completed request.
     #
-    # res - A Faraday::Response.
-    def initialize(res)
+    # agent - The Sawyer::Agent that is managing the API connection.
+    # res   - A Faraday::Response.
+    def initialize(agent, res)
+      @agent     = agent
       @status    = res.status
       @headers   = res.headers
       @data      = decode_body(res.body)
-      @relations = Relation.from_links(@data.delete(:_links))
+      @relations = Relation.from_links(@agent, @data.delete(:_links))
     end
 
     # Decodes a String response body to a resource.

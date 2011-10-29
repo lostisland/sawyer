@@ -3,8 +3,11 @@ module Sawyer
     class Map
       # Tracks the available next actions for a resource, and
       # issues requests for them.
-      def initialize
-        @map = {}
+      #
+      # agent - The Sawyer::Agent that is managing the API connection.
+      def initialize(agent)
+        @agent = agent
+        @map   = {}
       end
 
       # Adds a Relation to the map.
@@ -47,12 +50,13 @@ module Sawyer
     # Public: Builds an index of Relations from the value of a `_links`
     # property in a resource.
     #
+    # agent - The Sawyer::Agent that is managing the API connection.
     # index - The Hash mapping Relation names to the Hash Relation
     #         options.
     #
     # Returns a Relation::Map
-    def self.from_links(index)
-      rels = Map.new
+    def self.from_links(agent, index)
+      rels = Map.new agent
 
       index.each do |name, options|
         rels << from_link(name, options)
@@ -74,7 +78,7 @@ module Sawyer
       new name, options[:_href], options[:_method]
     end
 
-    # Public: A Relation represents an available next action for a resource.
+    # A Relation represents an available next action for a resource.
     #
     # name   - The Symbol name of the relation.
     # href   - The String URL of the location of the next action.
