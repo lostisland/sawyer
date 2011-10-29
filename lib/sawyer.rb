@@ -5,4 +5,5 @@ module Sawyer
 end
 
 %w(
+  relation
 ).each { |f| require File.expand_path("../sawyer/#{f}", __FILE__) }
