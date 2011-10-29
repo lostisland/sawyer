@@ -4,6 +4,8 @@ module Sawyer
   class Error < StandardError; end
 end
 
+require 'set'
+
 %w(
   resource
   relation

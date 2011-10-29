@@ -1,5 +1,3 @@
-require 'set'
-
 module Sawyer
   class Resource
     SPECIAL_METHODS = Set.new %w(agent rels fields)
@@ -33,3 +31,4 @@ module Sawyer
     end
   end
 end
+

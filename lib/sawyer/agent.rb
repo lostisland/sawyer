@@ -2,6 +2,8 @@ require 'faraday'
 
 module Sawyer
   class Agent
+    NO_BODY = Set.new [:get, :head]
+
     # Agents handle making the requests, and passing responses to
     # Sawyer::Response.
     #
@@ -21,15 +23,52 @@ module Sawyer
 
     # Makes a request through Faraday.
     #
-    # method - The Symbol name of an HTTP method.
-    # *args  - List of arguments to pass to Faraday::Connection.
+    # method  - The Symbol name of an HTTP method.
+    # url     - The String URL to access.  This can be relative to the Agent's
+    #           endpoint.
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
     #
-    # Optionally Yields a Faraday::Request object to fine-tune the
-    # request parameters.
     # Returns a Sawyer::Response.
-    def request(method, *args)
-      block = block_given? ? Proc.new : nil
-      Response.new self, @conn.send(method, *args, &block)
+    def request(method, url, data = nil, options = nil)
+      if NO_BODY.include?(method)
+        options ||= data
+        data      = nil
+      end
+
+      options ||= {}
+
+      res = @conn.send method, url, do |req|
+        req.body = encode_body(data) if data 
+        if params = options[:query]
+          req.params.update params
+        end
+        if headers = options[:headers]
+          req.headers.update headers
+        end
+      end
+
+      Response.new self, res
+    end
+
+    # Encodes an object to a string for the API request.
+    #
+    # data - The Hash or Resource that is being sent.
+    #
+    # Returns a String.
+    def encode_body(data)
+      Yajl.dump data
+    end
+
+    # Decodes a String response body to a resource.
+    #
+    # str - The String body from the response.
+    #
+    # Returns an Object resource (Hash by default).
+    def decode_body(str)
+      Yajl.load str, :symbolize_keys => true
     end
 
     def inspect
@@ -37,3 +76,4 @@ module Sawyer
     end
   end
 end
+

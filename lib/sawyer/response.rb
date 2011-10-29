@@ -16,7 +16,7 @@ module Sawyer
       @agent   = agent
       @status  = res.status
       @headers = res.headers
-      @data    = process_data(decode_body(res.body))
+      @data    = process_data(@agent.decode_body(res.body))
     end
 
     # Turns parsed contents from an API response into a Resource or
@@ -32,15 +32,6 @@ module Sawyer
       else
         raise ArgumentError, "Unable to process #{data.inspect}.  Want a Hash or Array"
       end
-    end
-
-    # Decodes a String response body to a resource.
-    #
-    # str - The String body from the response.
-    #
-    # Returns an Object resource (Hash by default).
-    def decode_body(str)
-      Yajl.load str, :symbolize_keys => true
     end
 
     def inspect

@@ -57,6 +57,10 @@ module Sawyer
     #
     # Returns a Relation::Map
     def self.from_links(agent, index)
+      if index.is_a?(Array)
+        raise ArgumentError, "Links must be a hash of rel => {_href => '...'}: #{index.inspect}"
+      end
+
       rels = Map.new
 
       index.each do |name, options|
@@ -104,14 +108,16 @@ module Sawyer
 
     # Public: Makes another API request with the given relation.
     #
-    # *args - List of arguments to pass to Faraday::Connection.
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
     #
     # Optionally Yields a Faraday::Request object to fine-tune the
     # request parameters.
     # Returns a Sawyer::Response.
-    def call(*args)
-      block = block_given? ? Proc.new : nil
-      @agent.request @method, @href, *args, &block
+    def call(data = nil, options = {})
+      @agent.request @method, @href, data, options
     end
 
     def inspect
