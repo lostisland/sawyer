@@ -36,7 +36,7 @@ module Sawyer
         [200, {}, "{}"]
       end
 
-      res = @agent.request :post, 'b/c' , {:a => 1},
+      res = @agent.call :post, 'b/c' , {:a => 1},
         :headers => {"X-Test" => "abc"},
         :query   => {:foo => 'bar'}
       assert_equal 200, res.status
@@ -50,7 +50,7 @@ module Sawyer
         [200, {}, "{}"]
       end
 
-      res = @agent.request :get, 'b/c' , {:a => 1},
+      res = @agent.call :get, 'b/c' , {:a => 1},
         :headers => {"X-Test" => "abc"},
         :query   => {:foo => 'bar'}
       assert_equal 200, res.status

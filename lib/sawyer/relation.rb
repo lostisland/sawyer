@@ -119,7 +119,7 @@ module Sawyer
     # request parameters.
     # Returns a Sawyer::Response.
     def call(data = nil, options = nil)
-      @agent.request @method, @href, data, options
+      @agent.call @method, @href, data, options
     end
 
     def inspect

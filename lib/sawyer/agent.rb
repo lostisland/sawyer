@@ -18,7 +18,7 @@ module Sawyer
     #
     # Returns a Sawyer::Response.
     def start
-      request :get, @endpoint
+      call :get, @endpoint
     end
 
     # Makes a request through Faraday.
@@ -34,7 +34,7 @@ module Sawyer
     #           :query   - Hash of URL query params to set.
     #
     # Returns a Sawyer::Response.
-    def request(method, url, data = nil, options = nil)
+    def call(method, url, data = nil, options = nil)
       if NO_BODY.include?(method)
         options ||= data
         data      = nil
