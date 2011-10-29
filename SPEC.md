@@ -35,12 +35,11 @@ root.rels
 root.data
 ```
 
-Now, we can access a relation off the root.
+Now, we can access a relation off the root resource.
 
 ```ruby
-res = root.rels[:users].call do |req|
-  req.query['sort'] = 'login'
-end
+resource = root.data
+res = resource.rels[:users].call :query => {:sort => 'login'}
 
 # An array of users
 users = res.data
