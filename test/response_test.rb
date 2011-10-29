@@ -31,13 +31,13 @@ module Sawyer
     end
 
     def test_gets_body
-      assert_equal 1, @res.data[:a]
-      assert_equal [:a], @res.data.keys
+      assert_equal 1, @res.data.a
+      assert_equal [:a], @res.data.fields
     end
 
     def test_gets_relations
-      assert_equal '/a',  @res.relations[:self].href
-      assert_equal :post, @res.relations[:self].method
+      assert_equal '/a',  @res.data.relations[:self].href
+      assert_equal :post, @res.data.relations[:self].method
     end
 
     def test_makes_request_from_relation
@@ -45,7 +45,7 @@ module Sawyer
         [200, {}, "{}"]
       end
 
-      res = @res.request :self
+      res = @res.request @res.data.relations[:self]
       assert_equal 200, @res.status
     end
   end

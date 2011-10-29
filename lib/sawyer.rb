@@ -5,6 +5,7 @@ module Sawyer
 end
 
 %w(
+  resource
   relation
   response
   agent

@@ -13,11 +13,10 @@ module Sawyer
     # agent - The Sawyer::Agent that is managing the API connection.
     # res   - A Faraday::Response.
     def initialize(agent, res)
-      @agent     = agent
-      @status    = res.status
-      @headers   = res.headers
-      @data      = decode_body(res.body)
-      @relations = Relation.from_links(@data.delete(:_links))
+      @agent   = agent
+      @status  = res.status
+      @headers = res.headers
+      @data    = process_data(decode_body(res.body))
     end
 
     # Public: Makes another API request with the given relation.
@@ -36,6 +35,21 @@ module Sawyer
 
       block = block_given? ? Proc.new : nil
       @agent.request rel.method, rel.href, *args, &block
+    end
+
+    # Turns parsed contents from an API response into a Resource or
+    # collection of Resources.
+    #
+    # data - Either an Array or Hash parsed from JSON.
+    #
+    # Returns either a Resource or Array of Resources.
+    def process_data(data)
+      case data
+      when Hash  then Resource.new(data)
+      when Array then data.map { |hash| process_data(hash) }
+      else
+        raise ArgumentError, "Unable to process #{data.inspect}.  Want a Hash or Array"
+      end
     end
 
     # Decodes a String response body to a resource.

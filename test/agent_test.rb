@@ -22,10 +22,10 @@ module Sawyer
       res = agent.start
 
       assert_equal 200, res.status
-      assert res.data.empty?
+      assert_kind_of Sawyer::Resource, resource = res.data
 
-      assert_equal '/users', res.relations[:users].href
-      assert_equal :get,     res.relations[:users].method
+      assert_equal '/users', resource.relations[:users].href
+      assert_equal :get,     resource.relations[:users].method
     end
   end
 end
