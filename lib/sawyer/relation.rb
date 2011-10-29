@@ -24,6 +24,20 @@ module Sawyer
       def [](key)
         @map[key.to_sym]
       end
+
+      # Gets the number of mapped Relations.
+      #
+      # Returns an Integer.
+      def size
+        @map.size
+      end
+
+      # Gets a list of the Relation names.
+      #
+      # Returns an Array of Symbols in no specific order.
+      def keys
+        @map.keys
+      end
     end
 
     attr_reader :name,
@@ -42,7 +56,7 @@ module Sawyer
 
       index.each do |name, options|
         rels << from_link(name, options)
-      end
+      end if index
 
       rels
     end

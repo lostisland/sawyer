@@ -18,10 +18,18 @@ module Sawyer
 
       rels = Sawyer::Relation.from_links(index)
 
+      assert_equal 1, rels.size
+      assert_equal [:self], rels.keys
       assert rel = rels[:self]
       assert_equal :self,      rel.name
       assert_equal '/users/1', rel.href
       assert_equal :post,      rel.method
+    end
+
+    def test_builds_relations_from_nil
+      rels = Sawyer::Relation.from_links nil
+      assert_equal 0,  rels.size
+      assert_equal [], rels.keys
     end
   end
 end
