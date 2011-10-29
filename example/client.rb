@@ -2,42 +2,44 @@ require File.expand_path("../../lib/sawyer", __FILE__)
 require 'faraday'
 require 'pp'
 
-endpoint = "http://localhost:4567/"
+endpoint = "http://localhost:9393/"
 agent    = Sawyer::Agent.new(endpoint) do |http|
   http.headers['content-type'] = 'application/json'
 end
 puts agent.inspect
 puts
 
-puts "ROOT RELATIONS"
-pp agent.relations
-puts
+root = agent.start
+puts root.inspect
 
 puts "LISTING USERS"
-users_rel = agent.relation('users')
+users_rel = root.data.rels[:users]
 
 puts users_rel.inspect
-puts users_rel.schema.inspect
 puts
 
-users_rel.request.each do |user|
-  fav_rel = user.relations['favorites']
+users_res = users_rel.call
+puts users_res.inspect
 
-  puts "#{user[:login]} favorites:"
-  puts fav_rel.schema.inspect
+users = users_res.data
 
-  fav_rel.request.each do |sushi|
+users.each do |user|
+  puts "#{user.login} favorites:"
+
+  fav_res = user.rels[:favorites].call
+
+  fav_res.data.each do |sushi|
     puts "- #{sushi.inspect})"
   end
   puts
 end
 
 puts "CREATING USER"
-create_user_rel = agent.relation("users/create")
+create_user_rel = root.data.rels['users/create']
 
 puts create_user_rel.inspect
 
-created = create_user_rel.request(:login => 'booya')
+created = create_user_rel.call(:login => 'booya')
 puts created.inspect
 puts
 
