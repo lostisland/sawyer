@@ -3,8 +3,10 @@ require File.expand_path("../helper", __FILE__)
 module Sawyer
   class ResponseTest < TestCase
     def setup
-      @conn = Faraday.new do |builder|
-        builder.adapter :test do |stub|
+      @stubs = Faraday::Adapter::Test::Stubs.new
+      @agent = Sawyer::Agent.new "http://foo.com" do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test, @stubs do |stub|
           stub.get '/' do
             [200, {'Content-Type' => 'application/json'}, Yajl.dump(
               :a => 1,
@@ -15,8 +17,9 @@ module Sawyer
           end
         end
       end
-
-      @res = Sawyer::Response.new(nil, @conn.get('/'))
+      
+      @res = @agent.start
+      assert_kind_of Sawyer::Response, @res
     end
 
     def test_gets_status
@@ -35,6 +38,15 @@ module Sawyer
     def test_gets_relations
       assert_equal '/a',  @res.relations[:self].href
       assert_equal :post, @res.relations[:self].method
+    end
+
+    def test_makes_request_from_relation
+      @stubs.post '/a' do
+        [200, {}, "{}"]
+      end
+
+      res = @res.request :self
+      assert_equal 200, @res.status
     end
   end
 end
