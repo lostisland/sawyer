@@ -7,7 +7,7 @@ get '/' do
   Yajl.dump({
     :_links => {
       :users          => {:_href => "/users"},
-      :'users/create' => {:_href => "/users", :_method => 'post'},
+      :'users:post' => {:_href => "/users", :_method => 'post'},
       :nigiri         => {:_href => "/nigiri"}
     }
   }, :pretty => true)
@@ -22,13 +22,13 @@ users = [
    :_links => {
      :self               => {:_href => '/users/sawyer'},
      :favorites          => {:_href => '/users/sawyer/favorites'},
-     :'favorites/create' => {:_href => '/users/sawyer/favorites', :_method => :post}
+     :'favorites:post' => {:_href => '/users/sawyer/favorites', :_method => :post}
    }},
   {:id => 2, :login => 'faraday', :created_at => Time.utc(2004, 12, 22),
    :_links => {
      :self               => {:_href => '/users/faraday'},
      :favorites          => {:_href => '/users/faraday/favorites'},
-     :'favorites/create' => {:_href => '/users/faraday/favorites', :_method => :post}
+     :'favorites:post' => {:_href => '/users/faraday/favorites', :_method => :post}
    }}
 ]
 
@@ -68,7 +68,7 @@ post '/users' do
     :_links => {
       :self              => {:_href => "/users/#{hash[:login]}"},
       :favorites         => {:_href => "/users/#{hash[:login]}/favorites"},
-      'favorites/create' => {:_href => "/users/#{hash[:login]}/favorites", :_method => :post}
+      'favorites:post'   => {:_href => "/users/#{hash[:login]}/favorites", :_method => :post}
     }
   ), :pretty => true
 end

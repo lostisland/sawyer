@@ -35,7 +35,7 @@ users.each do |user|
 end
 
 puts "CREATING USER"
-create_user_rel = root.data.rels['users/create']
+create_user_rel = root.data.rels['users:post']
 
 puts create_user_rel.inspect
 
