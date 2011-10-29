@@ -43,6 +43,30 @@ res = root.relations.users do |req|
 end
 
 # An array of users
-res.data
+users = res.data
+```
+
+This call returns two types of relations: relations on the collection of
+users, and relations on each user.  You can access the collection
+resources from the response.
+
+```ruby
+# get the next page of users
+res2 = res.relations.next
+
+# page 2 of the users collection
+res2.data
+```
+
+Each user has it's own relations too:
+
+```ruby
+# favorite the previous user
+users.each_with_index do |user, index|
+  res = user.relations.favorite users[index-1]
+  if !res.success?
+    puts "#{user.name} could not favorite #{users[index-1].name}"
+  end
+end
 ```
 
