@@ -17,7 +17,25 @@ module Sawyer
       @status    = res.status
       @headers   = res.headers
       @data      = decode_body(res.body)
-      @relations = Relation.from_links(@agent, @data.delete(:_links))
+      @relations = Relation.from_links(@data.delete(:_links))
+    end
+
+    # Public: Makes another API request with the given relation.
+    #
+    # name  - Either a String relation name or a Relation.
+    # *args - List of arguments to pass to Faraday::Connection.
+    #
+    # Optionally Yields a Faraday::Request object to fine-tune the
+    # request parameters.
+    # Returns a Sawyer::Response.
+    def request(name, *args)
+      rel = name.is_a?(Relation) ? name : @relations[name]
+      if !rel
+        raise ArgumentError, "#{name.inspect} is not an available Relation"
+      end
+
+      block = block_given? ? Proc.new : nil
+      @agent.request rel.method, rel.href, *args, &block
     end
 
     # Decodes a String response body to a resource.
