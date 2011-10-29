@@ -38,7 +38,7 @@ root.data
 Now, we can access a relation off the root.
 
 ```ruby
-res = root.rels.users do |req|
+res = root.rels[:users].call do |req|
   req.query['sort'] = 'login'
 end
 
@@ -52,7 +52,7 @@ resources from the response.
 
 ```ruby
 # get the next page of users
-res2 = res.rels.next
+res2 = res.rels[:next].call
 
 # page 2 of the users collection
 res2.data
@@ -63,7 +63,7 @@ Each user has it's own relations too:
 ```ruby
 # favorite the previous user
 users.each_with_index do |user, index|
-  res = user.rels.favorite users[index-1]
+  res = user.rels[:favorite].call users[index-1]
   if !res.success?
     puts "#{user.name} could not favorite #{users[index-1].name}"
   end

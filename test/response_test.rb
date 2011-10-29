@@ -45,8 +45,7 @@ module Sawyer
         [200, {}, "{}"]
       end
 
-      rel = @res.data.rels[:self]
-      res = rel.call
+      res = @res.data.rels[:self].call
       assert_equal 200, @res.status
     end
   end
