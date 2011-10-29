@@ -4,7 +4,7 @@ module Sawyer
   class RelationTest < TestCase
     def test_builds_relation_from_hash
       hash = {:_href => '/users/1', :_method => 'post'}
-      rel  = Sawyer::Relation.from_link(:self, hash)
+      rel  = Sawyer::Relation.from_link(nil, :self, hash)
 
       assert_equal :self,      rel.name
       assert_equal '/users/1', rel.href
@@ -16,7 +16,7 @@ module Sawyer
         'self' => {:_href => '/users/1', :_method => 'post'}
       }
 
-      rels = Sawyer::Relation.from_links(index)
+      rels = Sawyer::Relation.from_links(nil, index)
 
       assert_equal 1, rels.size
       assert_equal [:self], rels.keys
@@ -27,7 +27,7 @@ module Sawyer
     end
 
     def test_builds_relations_from_nil
-      rels = Sawyer::Relation.from_links nil
+      rels = Sawyer::Relation.from_links nil, nil
       assert_equal 0,  rels.size
       assert_equal [], rels.keys
     end

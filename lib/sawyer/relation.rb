@@ -44,7 +44,8 @@ module Sawyer
       end
     end
 
-    attr_reader :name,
+    attr_reader :agent,
+      :name,
       :href,
       :method
 
@@ -55,11 +56,11 @@ module Sawyer
     #         options.
     #
     # Returns a Relation::Map
-    def self.from_links(index)
+    def self.from_links(agent, index)
       rels = Map.new
 
       index.each do |name, options|
-        rels << from_link(name, options)
+        rels << from_link(agent, name, options)
       end if index
 
       rels
@@ -68,24 +69,27 @@ module Sawyer
     # Public: Builds a single Relation from the given options.  These are
     # usually taken from a `_links` property in a resource.
     #
+    # agent   - The Sawyer::Agent that made the request.
     # name    - The Symbol name of the Relation.
     # options - A Hash containing the other Relation properties.
     #           :_href   - The String URL of the next action's location.
     #           :_method - The optional String HTTP method.
     #
     # Returns a Relation.
-    def self.from_link(name, options)
-      new name, options[:_href], options[:_method]
+    def self.from_link(agent, name, options)
+      new agent, name, options[:_href], options[:_method]
     end
 
     # A Relation represents an available next action for a resource.
     #
+    # agent  - The Sawyer::Agent that made the request.
     # name   - The Symbol name of the relation.
     # href   - The String URL of the location of the next action.
     # method - The Symbol HTTP method.  Default: :get
-    def initialize(name, href, method = nil)
-      @name = name.to_sym
-      @href = href.to_s
+    def initialize(agent, name, href, method = nil)
+      @agent = agent
+      @name  = name.to_sym
+      @href  = href.to_s
 
       if method.is_a? String
         if method.size.zero?
@@ -96,6 +100,18 @@ module Sawyer
       end
 
       @method = (method || :get).to_sym
+    end
+
+    # Public: Makes another API request with the given relation.
+    #
+    # *args - List of arguments to pass to Faraday::Connection.
+    #
+    # Optionally Yields a Faraday::Request object to fine-tune the
+    # request parameters.
+    # Returns a Sawyer::Response.
+    def call(*args)
+      block = block_given? ? Proc.new : nil
+      @agent.request @method, @href, *args, &block
     end
 
     def inspect
