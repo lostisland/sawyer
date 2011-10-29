@@ -2,17 +2,17 @@ require 'set'
 
 module Sawyer
   class Resource
-    SPECIAL_METHODS = Set.new %w(agent relations fields)
-    attr_reader :_agent, :_relations, :_fields
+    SPECIAL_METHODS = Set.new %w(agent rels fields)
+    attr_reader :_agent, :_rels, :_fields
 
     # Initializes a Resource with the given data.
     #
     # agent - The Sawyer::Agent that made the API request.
     # data  - Hash of key/value properties.
     def initialize(agent, data)
-      @_agent     = agent
-      @_relations = Relation.from_links(agent, data.delete(:_links))
-      @_fields    = []
+      @_agent  = agent
+      @_rels   = Relation.from_links(agent, data.delete(:_links))
+      @_fields = []
       data.each do |key, value|
         @_fields << key
         instance_variable_set "@#{key}", value

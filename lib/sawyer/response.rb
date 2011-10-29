@@ -6,7 +6,7 @@ module Sawyer
       :status,
       :headers,
       :data,
-      :relations
+      :rels
 
     # Builds a Response after a completed request.
     #
@@ -44,7 +44,7 @@ module Sawyer
     end
 
     def inspect
-      %(#<#{self.class}: #{@status} @relations=#{@relations.inspect} @data=#{@data.inspect}>)
+      %(#<#{self.class}: #{@status} @rels=#{@rels.inspect} @data=#{@data.inspect}>)
     end
   end
 end

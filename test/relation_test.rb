@@ -11,7 +11,7 @@ module Sawyer
       assert_equal :post,      rel.method
     end
 
-    def test_builds_relations_from_hash_index
+    def test_builds_rels_from_hash_index
       index = {
         'self' => {:_href => '/users/1', :_method => 'post'}
       }
@@ -26,7 +26,7 @@ module Sawyer
       assert_equal :post,      rel.method
     end
 
-    def test_builds_relations_from_nil
+    def test_builds_rels_from_nil
       rels = Sawyer::Relation.from_links nil, nil
       assert_equal 0,  rels.size
       assert_equal [], rels.keys

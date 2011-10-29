@@ -24,8 +24,8 @@ module Sawyer
       assert_equal 200, res.status
       assert_kind_of Sawyer::Resource, resource = res.data
 
-      assert_equal '/users', resource.relations[:users].href
-      assert_equal :get,     resource.relations[:users].method
+      assert_equal '/users', resource.rels[:users].href
+      assert_equal :get,     resource.rels[:users].method
     end
   end
 end

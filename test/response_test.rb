@@ -35,9 +35,9 @@ module Sawyer
       assert_equal [:a], @res.data.fields
     end
 
-    def test_gets_relations
-      assert_equal '/a',  @res.data.relations[:self].href
-      assert_equal :post, @res.data.relations[:self].method
+    def test_gets_rels
+      assert_equal '/a',  @res.data.rels[:self].href
+      assert_equal :post, @res.data.rels[:self].method
     end
 
     def test_makes_request_from_relation
@@ -45,7 +45,7 @@ module Sawyer
         [200, {}, "{}"]
       end
 
-      rel = @res.data.relations[:self]
+      rel = @res.data.rels[:self]
       res = rel.call
       assert_equal 200, @res.status
     end
