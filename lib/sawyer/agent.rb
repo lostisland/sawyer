@@ -26,7 +26,9 @@ module Sawyer
     # method  - The Symbol name of an HTTP method.
     # url     - The String URL to access.  This can be relative to the Agent's
     #           endpoint.
-    # data    - The Optional Hash or Resource body to be sent.
+    # data    - The Optional Hash or Resource body to be sent.  :get or :head
+    #           requests can have no body, so this can be the options Hash
+    #           instead.
     # options - Hash of option to configure the API request.
     #           :headers - Hash of API headers to set.
     #           :query   - Hash of URL query params to set.

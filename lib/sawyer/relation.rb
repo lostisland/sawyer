@@ -108,7 +108,9 @@ module Sawyer
 
     # Public: Makes another API request with the given relation.
     #
-    # data    - The Optional Hash or Resource body to be sent.
+    # data    - The Optional Hash or Resource body to be sent.  :get or :head
+    #           requests can have no body, so this can be the options Hash
+    #           instead.
     # options - Hash of option to configure the API request.
     #           :headers - Hash of API headers to set.
     #           :query   - Hash of URL query params to set.
@@ -116,7 +118,7 @@ module Sawyer
     # Optionally Yields a Faraday::Request object to fine-tune the
     # request parameters.
     # Returns a Sawyer::Response.
-    def call(data = nil, options = {})
+    def call(data = nil, options = nil)
       @agent.request @method, @href, data, options
     end
 
