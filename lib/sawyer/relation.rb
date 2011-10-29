@@ -41,6 +41,10 @@ module Sawyer
       def keys
         @map.keys
       end
+
+      def inspect
+        %(#<#{self.class}: #{@map.keys.inspect}>)
+      end
     end
 
     attr_reader :name,
@@ -96,6 +100,10 @@ module Sawyer
       end
 
       @method = (method || :get).to_sym
+    end
+
+    def inspect
+      %(#<#{self.class}: #{@name}: #{@method} #{@href}>)
     end
   end
 end

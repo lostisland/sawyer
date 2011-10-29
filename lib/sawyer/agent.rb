@@ -31,5 +31,9 @@ module Sawyer
       block = block_given? ? Proc.new : nil
       Response.new self, @conn.send(method, *args, &block)
     end
+
+    def inspect
+      %(<#{self.class} #{@endpoint}>)
+    end
   end
 end

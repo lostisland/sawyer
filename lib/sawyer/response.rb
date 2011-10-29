@@ -28,5 +28,9 @@ module Sawyer
     def decode_body(str)
       Yajl.load str, :symbolize_keys => true
     end
+
+    def inspect
+      %(#<#{self.class}: #{@status} @relations=#{@relations.inspect} @data=#{@data.inspect}>)
+    end
   end
 end
