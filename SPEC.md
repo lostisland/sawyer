@@ -4,8 +4,8 @@ To use Sawyer, create a new Agent with a URL endpoint.
 
 ```ruby
 endpoint = "http://my-api.com"
-agent    = Sawyer::Agent.new endpoint do |http|
-  http.headers['content-type'] = 'application/vnd.my-api+json'
+agent    = Sawyer::Agent.new endpoint do |conn|
+  conn.headers['content-type'] = 'application/vnd.my-api+json'
 end
 ```
 
