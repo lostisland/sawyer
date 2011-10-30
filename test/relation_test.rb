@@ -88,7 +88,8 @@ module Sawyer
       agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
-          stubs.get '/octocat/hello' do
+          stubs.get '/octocat/hello' do |env|
+            assert_equal "a=1&b=2", env[:url].query
             [200, {}, '{}']
           end
 
@@ -98,10 +99,10 @@ module Sawyer
         end
       end
 
-      rel = Sawyer::Relation.new agent, :repo, "{/user,repo}"
+      rel = Sawyer::Relation.new agent, :repo, "{/user,repo}{?a,b}"
 
       assert_equal 404, rel.get.status
-      assert_equal 200, rel.get(:uri => {'user' => 'octocat', 'repo' => 'hello'}).status
+      assert_equal 200, rel.get(:uri => {'user' => 'octocat', 'repo' => 'hello', 'a' => 1, 'b' => 2}).status
     end
   end
 end
