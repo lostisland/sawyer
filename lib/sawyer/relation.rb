@@ -126,8 +126,8 @@ module Sawyer
     #           :method  - Symbol HTTP method.
     #
     # Returns a Sawyer::Response.
-    def head(data = nil, options = nil)
-      options ||= data || {}
+    def head(options = nil)
+      options ||= {}
       options[:method] = :head
       call options
     end
@@ -143,8 +143,8 @@ module Sawyer
     #           :method  - Symbol HTTP method.
     #
     # Returns a Sawyer::Response.
-    def get(data = nil, options = nil)
-      options ||= data || {}
+    def get(options = nil)
+      options ||= {}
       options[:method] = :get
       call options
     end
