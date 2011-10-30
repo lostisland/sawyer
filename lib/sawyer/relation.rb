@@ -47,21 +47,24 @@ module Sawyer
     attr_reader :agent,
       :name,
       :href,
-      :method
+      :method,
+      :available_methods
+
+    DEFAULT_METHOD = 'get'.freeze
 
     # Public: Builds an index of Relations from the value of a `_links`
-    # property in a resource.
+    # property in a resource.  :get is the default method.  Any links with
+    # multiple specified methods will get multiple relations created.
     #
     # index - The Hash mapping Relation names to the Hash Relation
     #         options.
+    # rels  - A Relation::Map to store the Relations.
     #
     # Returns a Relation::Map
-    def self.from_links(agent, index)
+    def self.from_links(agent, index, rels = Map.new)
       if index.is_a?(Array)
         raise ArgumentError, "Links must be a hash of rel => {_href => '...'}: #{index.inspect}"
       end
-
-      rels = Map.new
 
       index.each do |name, options|
         rels << from_link(agent, name, options)
@@ -95,18 +98,26 @@ module Sawyer
       @name  = name.to_sym
       @href  = href.to_s
 
+      methods = nil
+
       if method.is_a? String
         if method.size.zero?
           method = nil
         else
           method.downcase!
+          methods = method.split(',').map! do |m|
+            m.strip!
+            m.to_sym
+          end
+          method = methods.first
         end
       end
 
       @method = (method || :get).to_sym
+      @available_methods = Set.new methods || [@method]
     end
 
-    # Public: Makes another API request with the given relation.
+    # Public: Makes an API request with the curent Relation using HEAD.
     #
     # data    - The Optional Hash or Resource body to be sent.  :get or :head
     #           requests can have no body, so this can be the options Hash
@@ -114,12 +125,126 @@ module Sawyer
     # options - Hash of option to configure the API request.
     #           :headers - Hash of API headers to set.
     #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
     #
-    # Optionally Yields a Faraday::Request object to fine-tune the
-    # request parameters.
+    # Returns a Sawyer::Response.
+    def head(data = nil, options = nil)
+      options ||= data || {}
+      options[:method] = :head
+      call options
+    end
+
+    # Public: Makes an API request with the curent Relation using GET.
+    #
+    # data    - The Optional Hash or Resource body to be sent.  :get or :head
+    #           requests can have no body, so this can be the options Hash
+    #           instead.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Returns a Sawyer::Response.
+    def get(data = nil, options = nil)
+      options ||= data || {}
+      options[:method] = :get
+      call options
+    end
+
+    # Public: Makes an API request with the curent Relation using POST.
+    #
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Returns a Sawyer::Response.
+    def post(data = nil, options = nil)
+      options ||= {}
+      options[:method] = :post
+      call data, options
+    end
+
+    # Public: Makes an API request with the curent Relation using PUT.
+    #
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Returns a Sawyer::Response.
+    def put(data = nil, options = nil)
+      options ||= {}
+      options[:method] = :put
+      call data, options
+    end
+
+    # Public: Makes an API request with the curent Relation using PATCH.
+    #
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Returns a Sawyer::Response.
+    def patch(data = nil, options = nil)
+      options ||= {}
+      options[:method] = :patch
+      call data, options
+    end
+
+    # Public: Makes an API request with the curent Relation using DELETE.
+    #
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Returns a Sawyer::Response.
+    def delete(data = nil, options = nil)
+      options ||= {}
+      options[:method] = :delete
+      call data, options
+    end
+
+    # Public: Makes an API request with the curent Relation using OPTIONS.
+    #
+    # data    - The Optional Hash or Resource body to be sent.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Returns a Sawyer::Response.
+    def options(data = nil, opt = nil)
+      opt ||= {}
+      opt[:method] = :options
+      call data, opt
+    end
+
+    # Public: Makes an API request with the curent Relation.
+    #
+    # data    - The Optional Hash or Resource body to be sent.  :get or :head
+    #           requests can have no body, so this can be the options Hash
+    #           instead.
+    # options - Hash of option to configure the API request.
+    #           :headers - Hash of API headers to set.
+    #           :query   - Hash of URL query params to set.
+    #           :method  - Symbol HTTP method.
+    #
+    # Raises ArgumentError if the :method value is not in @available_methods.
     # Returns a Sawyer::Response.
     def call(data = nil, options = nil)
-      @agent.call @method, @href, data, options
+      m = options && options[:method]
+      if m && !@available_methods.include?(m == :head ? :get : m)
+        raise ArgumentError, "method #{m.inspect} is not available: #{@available_methods.to_a.inspect}"
+      end
+
+      @agent.call m || @method, @href, data, options
     end
 
     def inspect
