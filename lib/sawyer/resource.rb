@@ -13,7 +13,21 @@ module Sawyer
       @_fields = []
       data.each do |key, value|
         @_fields << key
-        instance_variable_set "@#{key}", value
+        instance_variable_set "@#{key}", process_value(value)
+      end
+    end
+
+    # Processes an individual value of this resource.  Hashes get exploded
+    # into another Resource, and Arrays get their values processed too.
+    #
+    # value - An Object value of a Resource's data.
+    #
+    # Returns an Object to set as the value of a Resource key.
+    def process_value(value)
+      case value
+      when Hash  then self.class.new(@_agent, value)
+      when Array then value.map { |v| process_value(v) }
+      else value
       end
     end
 

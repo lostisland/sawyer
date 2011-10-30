@@ -28,5 +28,30 @@ module Sawyer
         assert res._fields.include?(f)
       end
     end
+
+    def test_nested_object
+      res = Resource.new :agent,
+        :user   => {:id => 1, :_links => {:self => {:_href => '/users/1'}}},
+        :_links => {:self => {:_href => '/'}}
+
+      assert_equal '/', res.rels[:self].href
+      assert_kind_of Resource, res.user
+      assert_equal 1, res.user.id
+      assert_equal '/users/1', res.user.rels[:self].href
+    end
+
+    def test_nested_collection
+      res = Resource.new :agent,
+        :users  => [{:id => 1, :_links => {:self => {:_href => '/users/1'}}}],
+        :_links => {:self => {:_href => '/'}}
+
+      assert_equal '/', res.rels[:self].href
+      assert_kind_of Array, res.users
+
+      assert user = res.users.first
+      assert_kind_of Resource, user
+      assert_equal 1, user.id
+      assert_equal '/users/1', user.rels[:self].href
+    end
   end
 end
