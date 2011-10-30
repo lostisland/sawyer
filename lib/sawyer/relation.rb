@@ -50,8 +50,6 @@ module Sawyer
       :method,
       :available_methods
 
-    DEFAULT_METHOD = 'get'.freeze
-
     # Public: Builds an index of Relations from the value of a `_links`
     # property in a resource.  :get is the default method.  Any links with
     # multiple specified methods will get multiple relations created.
