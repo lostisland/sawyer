@@ -83,6 +83,26 @@ module Sawyer
         rel.post
       end
     end
+
+    def test_relation_api_calls_with_uri_tempate
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test do |stubs|
+          stubs.get '/octocat/hello' do
+            [200, {}, '{}']
+          end
+
+          stubs.get '/a' do
+            [404, {}, '{}']
+          end
+        end
+      end
+
+      rel = Sawyer::Relation.new agent, :repo, "{/user,repo}"
+
+      assert_equal 404, rel.get.status
+      assert_equal 200, rel.get(:uri => {'user' => 'octocat', 'repo' => 'hello'}).status
+    end
   end
 end
 

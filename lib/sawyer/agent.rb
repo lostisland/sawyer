@@ -1,4 +1,5 @@
 require 'faraday'
+require 'uri_template'
 
 module Sawyer
   class Agent
@@ -41,7 +42,7 @@ module Sawyer
       end
 
       options ||= {}
-
+      url = URITemplate.new(url).expand(options[:uri] || {})
       res = @conn.send method, url, do |req|
         req.body = encode_body(data) if data 
         if params = options[:query]
