@@ -6,9 +6,8 @@ get '/' do
 
   Yajl.dump({
     :_links => {
-      :users          => {:_href => "/users"},
-      :'users:post' => {:_href => "/users", :_method => 'post'},
-      :nigiri         => {:_href => "/nigiri"}
+      :users  => {:_href => "/users", :_method => 'get,post'},
+      :nigiri => {:_href => "/nigiri"}
     }
   }, :pretty => true)
 end
@@ -21,14 +20,12 @@ users = [
   {:id => 1, :login => 'sawyer',  :created_at => Time.utc(2004, 9, 22),
    :_links => {
      :self               => {:_href => '/users/sawyer'},
-     :favorites          => {:_href => '/users/sawyer/favorites'},
-     :'favorites:post' => {:_href => '/users/sawyer/favorites', :_method => :post}
+     :favorites          => {:_href => '/users/sawyer/favorites', :_method => 'get,post'}
    }},
   {:id => 2, :login => 'faraday', :created_at => Time.utc(2004, 12, 22),
    :_links => {
      :self               => {:_href => '/users/faraday'},
-     :favorites          => {:_href => '/users/faraday/favorites'},
-     :'favorites:post' => {:_href => '/users/faraday/favorites', :_method => :post}
+     :favorites          => {:_href => '/users/faraday/favorites', :_method => 'get,post'}
    }}
 ]
 
@@ -67,8 +64,7 @@ post '/users' do
     :created_at => Time.now.utc.xmlschema,
     :_links => {
       :self              => {:_href => "/users/#{hash[:login]}"},
-      :favorites         => {:_href => "/users/#{hash[:login]}/favorites"},
-      'favorites:post'   => {:_href => "/users/#{hash[:login]}/favorites", :_method => :post}
+      :favorites         => {:_href => "/users/#{hash[:login]}/favorites", :_method => 'get,post'}
     }
   ), :pretty => true
 end
@@ -89,6 +85,14 @@ get '/users/:login/favorites' do
   when users[0][:login] then Yajl.dump([nigiri[0]], :pretty => true)
   when users[1][:login] then Yajl.dump([], :pretty => true)
   else halt 404
+  end
+end
+
+post '/users/:login/favorites' do
+  if params[:id].to_i > 0
+    halt 201
+  else
+    halt 422
   end
 end
 
