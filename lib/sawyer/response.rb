@@ -29,6 +29,7 @@ module Sawyer
       case data
       when Hash  then Resource.new(agent, data)
       when Array then data.map { |hash| process_data(hash) }
+      when nil   then nil
       else
         raise ArgumentError, "Unable to process #{data.inspect}.  Want a Hash or Array"
       end

@@ -42,11 +42,12 @@ module Sawyer
 
     def test_makes_request_from_relation
       @stubs.post '/a' do
-        [200, {}, "{}"]
+        [201, {}, ""]
       end
 
       res = @res.data.rels[:self].call
-      assert_equal 200, @res.status
+      assert_equal 201, res.status
+      assert_nil res.data
     end
   end
 end
