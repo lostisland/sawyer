@@ -72,5 +72,28 @@ module Sawyer
       assert_equal 2, res.b
       assert res.key?(:b)
     end
+
+    def test_dynamic_attribute_methods_from_getter
+      res = Resource.new :agent, :a => 1
+      assert  res.key?(:a)
+      assert !res.respond_to?(:a)
+      assert !res.respond_to?(:a=)
+
+      assert_equal 1, res.a
+      assert res.respond_to?(:a)
+      assert res.respond_to?(:a=)
+    end
+
+    def test_dynamic_attribute_methods_from_setter
+      res = Resource.new :agent, :a => 1
+      assert !res.key?(:b)
+      assert !res.respond_to?(:b)
+      assert !res.respond_to?(:b=)
+
+      res.b = 1
+      assert res.key?(:b)
+      assert res.respond_to?(:b)
+      assert res.respond_to?(:b=)
+    end
   end
 end

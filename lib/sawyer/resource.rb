@@ -40,7 +40,6 @@ module Sawyer
       @_fields.include? key
     end
 
-  private
     ATTR_SETTER    = '='.freeze
     ATTR_PREDICATE = '?'.freeze
 
@@ -48,12 +47,15 @@ module Sawyer
     def method_missing(method, *args)
       attr_name, suffix = method.to_s.scan(/([a-z0-9\_]+)(\?|\=)?$/i).first
       if suffix == ATTR_SETTER
+        (class << self; self; end).send :attr_accessor, attr_name
         @_fields << attr_name.to_sym
         instance_variable_set "@#{attr_name}", args.first
       elsif @_fields.include?(attr_name.to_sym)
         value = instance_variable_get("@#{attr_name}")
         case suffix
-        when nil            then value
+        when nil
+          (class << self; self; end).send :attr_accessor, attr_name
+          value
         when ATTR_PREDICATE then !!value
         end
       elsif suffix.nil? && SPECIAL_METHODS.include?(attr_name)
