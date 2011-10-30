@@ -32,7 +32,7 @@ module Sawyer
 
     def test_gets_body
       assert_equal 1, @res.data.a
-      assert_equal [:a], @res.data.fields
+      assert_equal [:a], @res.data.fields.to_a
     end
 
     def test_gets_rels

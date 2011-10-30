@@ -53,5 +53,24 @@ module Sawyer
       assert_equal 1, user.id
       assert_equal '/users/1', user.rels[:self].href
     end
+
+    def test_attribute_predicates
+      res = Resource.new :agent, :a => 1, :b => true, :c => nil, :d => false
+
+      assert  res.a?
+      assert  res.b?
+      assert !res.c?
+      assert !res.d?
+    end
+
+    def test_attribute_setter
+      res = Resource.new :agent, :a => 1
+      assert_equal 1, res.a
+      assert !res.key?(:b)
+
+      res.b = 2
+      assert_equal 2, res.b
+      assert res.key?(:b)
+    end
   end
 end

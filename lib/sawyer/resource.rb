@@ -10,7 +10,7 @@ module Sawyer
     def initialize(agent, data)
       @_agent  = agent
       @_rels   = Relation.from_links(agent, data.delete(:_links))
-      @_fields = []
+      @_fields = Set.new []
       data.each do |key, value|
         @_fields << key
         instance_variable_set "@#{key}", process_value(value)
@@ -31,12 +31,31 @@ module Sawyer
       end
     end
 
+    # Checks to see if the given key is in this resource.
+    #
+    # key - A Symbol key.
+    #
+    # Returns true if the key exists, or false.
+    def key?(key)
+      @_fields.include? key
+    end
+
   private
+    ATTR_SETTER    = '='.freeze
+    ATTR_PREDICATE = '?'.freeze
+
     # Provides access to a resource's attributes.
     def method_missing(method, *args)
-      attr_name, suffix = method.to_s.scan(/(.*)(\?|\=)?$/).first
-      if value = instance_variable_get("@#{attr_name}")
-        value
+      attr_name, suffix = method.to_s.scan(/([a-z0-9\_]+)(\?|\=)?$/i).first
+      if suffix == ATTR_SETTER
+        @_fields << attr_name.to_sym
+        instance_variable_set "@#{attr_name}", args.first
+      elsif @_fields.include?(attr_name.to_sym)
+        value = instance_variable_get("@#{attr_name}")
+        case suffix
+        when nil            then value
+        when ATTR_PREDICATE then !!value
+        end
       elsif suffix.nil? && SPECIAL_METHODS.include?(attr_name)
         instance_variable_get "@_#{attr_name}"
       else
