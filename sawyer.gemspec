@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   ## Leave these as is they will be modified for you by the rake gemspec task.
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
-  s.name              = 'NAME'
-  s.version           = '0.0'
-  s.date              = '2010-01-01'
-  s.rubyforge_project = 'NAME'
+  s.name              = 'sawyer'
+  s.version           = '0.0.1'
+  s.date              = '2011-11-03'
+  s.rubyforge_project = 'sawyer'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   ## List your runtime dependencies here. Runtime dependencies are those
   ## that are needed for an end user to actually USE your code.
   s.add_dependency('faraday',      ['~> 0.7.5'])
-  s.add_dependency('uri_template', ['~> 0.0.1'])
+  s.add_dependency('uri_template', ['~> 0.1.0'])
   s.add_dependency('yajl-ruby',    ['~> 1.0.0'])
 
   ## List your development dependencies here. Development dependencies are
@@ -47,7 +47,26 @@ Gem::Specification.new do |s|
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
-  s.files = %w[]
+  s.files = %w[
+    README.md
+    Rakefile
+    SPEC.md
+    example/client.rb
+    example/nigiri.schema.json
+    example/server.rb
+    example/user.schema.json
+    lib/sawyer.rb
+    lib/sawyer/agent.rb
+    lib/sawyer/relation.rb
+    lib/sawyer/resource.rb
+    lib/sawyer/response.rb
+    sawyer.gemspec
+    test/agent_test.rb
+    test/helper.rb
+    test/relation_test.rb
+    test/resource_test.rb
+    test/response_test.rb
+  ]
   # = MANIFEST =
 
   ## Test files will be grabbed from the file list. Make sure the path glob
