@@ -77,12 +77,12 @@ module Sawyer
     # agent   - The Sawyer::Agent that made the request.
     # name    - The Symbol name of the Relation.
     # options - A Hash containing the other Relation properties.
-    #           :_href   - The String URL of the next action's location.
-    #           :_method - The optional String HTTP method.
+    #           :href   - The String URL of the next action's location.
+    #           :method - The optional String HTTP method.
     #
     # Returns a Relation.
     def self.from_link(agent, name, options)
-      new agent, name, options[:_href], options[:_method]
+      new agent, name, options[:href], options[:method]
     end
 
     # A Relation represents an available next action for a resource.

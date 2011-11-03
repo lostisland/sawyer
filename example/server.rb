@@ -6,8 +6,8 @@ get '/' do
 
   Yajl.dump({
     :_links => {
-      :users  => {:_href => "/users", :_method => 'get,post'},
-      :nigiri => {:_href => "/nigiri"}
+      :users  => {:href => "/users", :method => 'get,post'},
+      :nigiri => {:href => "/nigiri"}
     }
   }, :pretty => true)
 end
@@ -19,24 +19,24 @@ end
 users = [
   {:id => 1, :login => 'sawyer',  :created_at => Time.utc(2004, 9, 22),
    :_links => {
-     :self               => {:_href => '/users/sawyer'},
-     :favorites          => {:_href => '/users/sawyer/favorites', :_method => 'get,post'}
+     :self               => {:href => '/users/sawyer'},
+     :favorites          => {:href => '/users/sawyer/favorites', :method => 'get,post'}
    }},
   {:id => 2, :login => 'faraday', :created_at => Time.utc(2004, 12, 22),
    :_links => {
-     :self               => {:_href => '/users/faraday'},
-     :favorites          => {:_href => '/users/faraday/favorites', :_method => 'get,post'}
+     :self               => {:href => '/users/faraday'},
+     :favorites          => {:href => '/users/faraday/favorites', :method => 'get,post'}
    }}
 ]
 
 nigiri = [
   {:id => 1, :name => 'sake',  :fish => 'salmon',
    :_links => {
-     :self => {:_href => '/nigiri/sake'}
+     :self => {:href => '/nigiri/sake'}
    }},
   {:id => 2, :name => 'unagi', :fish => 'eel',
    :_links => {
-     :self => {:_href => '/nigiri/unagi'}
+     :self => {:href => '/nigiri/unagi'}
    }}
 ]
 
@@ -63,8 +63,8 @@ post '/users' do
     :id => 3,
     :created_at => Time.now.utc.xmlschema,
     :_links => {
-      :self              => {:_href => "/users/#{hash[:login]}"},
-      :favorites         => {:_href => "/users/#{hash[:login]}/favorites", :_method => 'get,post'}
+      :self              => {:href => "/users/#{hash[:login]}"},
+      :favorites         => {:href => "/users/#{hash[:login]}/favorites", :method => 'get,post'}
     }
   ), :pretty => true
 end

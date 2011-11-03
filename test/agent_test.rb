@@ -16,7 +16,7 @@ module Sawyer
 
         [200, {}, Yajl.dump(
           :_links => {
-            :users => {:_href => '/users'}})]
+            :users => {:href => '/users'}})]
       end
 
       res = @agent.start

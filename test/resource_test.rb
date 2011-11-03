@@ -4,7 +4,7 @@ module Sawyer
   class ResourceTest < TestCase
     def test_accessible_keys
       res = Resource.new :agent, :a => 1,
-        :_links => {:self => {:_href => '/'}}
+        :_links => {:self => {:href => '/'}}
 
       assert_equal 1, res.a
       assert res.rels[:self]
@@ -15,7 +15,7 @@ module Sawyer
 
     def test_clashing_keys
       res = Resource.new :agent, :agent => 1, :rels => 2, :fields => 3,
-        :_links => {:self => {:_href => '/'}}
+        :_links => {:self => {:href => '/'}}
 
       assert_equal 1, res.agent
       assert_equal 2, res.rels
@@ -31,8 +31,8 @@ module Sawyer
 
     def test_nested_object
       res = Resource.new :agent,
-        :user   => {:id => 1, :_links => {:self => {:_href => '/users/1'}}},
-        :_links => {:self => {:_href => '/'}}
+        :user   => {:id => 1, :_links => {:self => {:href => '/users/1'}}},
+        :_links => {:self => {:href => '/'}}
 
       assert_equal '/', res.rels[:self].href
       assert_kind_of Resource, res.user
@@ -42,8 +42,8 @@ module Sawyer
 
     def test_nested_collection
       res = Resource.new :agent,
-        :users  => [{:id => 1, :_links => {:self => {:_href => '/users/1'}}}],
-        :_links => {:self => {:_href => '/'}}
+        :users  => [{:id => 1, :_links => {:self => {:href => '/users/1'}}}],
+        :_links => {:self => {:href => '/'}}
 
       assert_equal '/', res.rels[:self].href
       assert_kind_of Array, res.users

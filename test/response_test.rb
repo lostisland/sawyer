@@ -11,7 +11,7 @@ module Sawyer
             [200, {'Content-Type' => 'application/json'}, Yajl.dump(
               :a => 1,
               :_links => {
-                :self => {:_href => '/a', :_method => 'POST'}
+                :self => {:href => '/a', :method => 'POST'}
               }
             )]
           end

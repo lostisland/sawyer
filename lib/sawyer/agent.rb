@@ -43,7 +43,7 @@ module Sawyer
 
       options ||= {}
       url = URITemplate.new(url).expand(options[:uri] || {})
-      res = @conn.send method, url, do |req|
+      res = @conn.send method, url do |req|
         req.body = encode_body(data) if data 
         if params = options[:query]
           req.params.update params

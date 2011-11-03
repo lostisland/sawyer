@@ -3,7 +3,7 @@ require File.expand_path("../helper", __FILE__)
 module Sawyer
   class RelationTest < TestCase
     def test_builds_relation_from_hash
-      hash = {:_href => '/users/1', :_method => 'post'}
+      hash = {:href => '/users/1', :method => 'post'}
       rel  = Sawyer::Relation.from_link(nil, :self, hash)
 
       assert_equal :self,      rel.name
@@ -14,7 +14,7 @@ module Sawyer
 
     def test_builds_multiple_rels_from_multiple_methods
       index = {
-        'comments' => {:_href => '/comments', :_method => 'get,post'}
+        'comments' => {:href => '/comments', :method => 'get,post'}
       }
 
       rels = Sawyer::Relation.from_links(nil, index)
@@ -29,7 +29,7 @@ module Sawyer
 
     def test_builds_rels_from_hash_index
       index = {
-        'self' => {:_href => '/users/1'}
+        'self' => {:href => '/users/1'}
       }
 
       rels = Sawyer::Relation.from_links(nil, index)
