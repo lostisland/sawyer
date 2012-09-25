@@ -42,7 +42,7 @@ module Sawyer
       end
 
       options ||= {}
-      url = URITemplate.new(url).expand(options[:uri] || {})
+      url = expand_url(url, options[:uri])
       res = @conn.send method, url do |req|
         req.body = encode_body(data) if data 
         if params = options[:query]
@@ -72,6 +72,12 @@ module Sawyer
     # Returns an Object resource (Hash by default).
     def decode_body(str)
       Yajl.load str, :symbolize_keys => true
+    end
+
+    def expand_url(url, options = nil)
+      tpl = url.respond_to?(:expand) ? url : URITemplate.new(url.to_s)
+      expand = tpl.method(:expand)
+      options ? expand.call(options) : expand.call
     end
 
     def inspect

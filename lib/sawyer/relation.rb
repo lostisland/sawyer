@@ -46,7 +46,7 @@ module Sawyer
 
     attr_reader :agent,
       :name,
-      :href,
+      :href_template,
       :method,
       :available_methods
 
@@ -93,8 +93,8 @@ module Sawyer
     # method - The Symbol HTTP method.  Default: :get
     def initialize(agent, name, href, method = nil)
       @agent = agent
-      @name  = name.to_sym
-      @href  = href.to_s
+      @name = name.to_sym
+      @href_template = URITemplate.new(href.to_s)
 
       methods = nil
 
@@ -224,6 +224,11 @@ module Sawyer
       call data, opt
     end
 
+    def href(options = nil)
+      method = @href_template.method(:expand)
+      options ? method.call(options) : method.call
+    end
+
     # Public: Makes an API request with the curent Relation.
     #
     # data    - The Optional Hash or Resource body to be sent.  :get or :head
@@ -242,11 +247,11 @@ module Sawyer
         raise ArgumentError, "method #{m.inspect} is not available: #{@available_methods.to_a.inspect}"
       end
 
-      @agent.call m || @method, @href, data, options
+      @agent.call m || @method, @href_template, data, options
     end
 
     def inspect
-      %(#<#{self.class}: #{@name}: #{@method} #{@href}>)
+      %(#<#{self.class}: #{@name}: #{@method} #{@href_template}>)
     end
   end
 end
