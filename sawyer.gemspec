@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   ## the sub! line in the Rakefile
   s.name              = 'sawyer'
   s.version           = '0.0.1'
-  s.date              = '2011-11-03'
+  s.date              = '2012-09-25'
   s.rubyforge_project = 'sawyer'
 
   ## Make sure your summary is short. The description may be as long
@@ -35,9 +35,9 @@ Gem::Specification.new do |s|
 
   ## List your runtime dependencies here. Runtime dependencies are those
   ## that are needed for an end user to actually USE your code.
-  s.add_dependency('faraday',      ['~> 0.7.5'])
-  s.add_dependency('uri_template', ['~> 0.1.0'])
-  s.add_dependency('yajl-ruby',    ['~> 1.0.0'])
+  s.add_dependency('faraday',      ['~> 0.8.4'])
+  s.add_dependency('uri_template', ['~> 0.5.0'])
+  s.add_dependency('yajl-ruby',    ['~> 1.1.0'])
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development

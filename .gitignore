@@ -1,1 +1,5 @@
 pkg
+vendor/cache
+vendor/gems
+.bundle
+Gemfile.lock
