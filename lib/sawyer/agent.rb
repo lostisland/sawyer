@@ -43,15 +43,19 @@ module Sawyer
 
       options ||= {}
       url = expand_url(url, options[:uri])
+      started = nil
       res = @conn.send method, url do |req|
-        req.body = encode_body(data) if data 
+        req.body = encode_body(data) if data
         if params = options[:query]
           req.params.update params
         end
         if headers = options[:headers]
           req.headers.update headers
         end
+        started = Time.now
       end
+      res.env[:sawyer_started] = started
+      res.env[:sawyer_ended] = Time.now
 
       Response.new self, res
     end

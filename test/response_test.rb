@@ -17,7 +17,7 @@ module Sawyer
           end
         end
       end
-      
+
       @res = @agent.start
       assert_kind_of Sawyer::Response, @res
     end
@@ -38,6 +38,10 @@ module Sawyer
     def test_gets_rels
       assert_equal '/a',  @res.data.rels[:self].href
       assert_equal :post, @res.data.rels[:self].method
+    end
+
+    def test_gets_response_timing
+      assert @res.timing > 0
     end
 
     def test_makes_request_from_relation

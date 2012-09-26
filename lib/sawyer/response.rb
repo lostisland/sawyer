@@ -16,6 +16,7 @@ module Sawyer
       @agent   = agent
       @status  = res.status
       @headers = res.headers
+      @env     = res.env
       @data    = process_data(@agent.decode_body(res.body))
     end
 
@@ -33,6 +34,10 @@ module Sawyer
       else
         raise ArgumentError, "Unable to process #{data.inspect}.  Want a Hash or Array"
       end
+    end
+
+    def timing
+      @timing ||= @env[:sawyer_ended] - @env[:sawyer_started]
     end
 
     def inspect
