@@ -9,9 +9,9 @@ module Sawyer
     # Sawyer::Response.
     #
     # endpoint - String URI of the API entry point.
-    def initialize(endpoint)
+    def initialize(endpoint, conn = nil)
       @endpoint = endpoint
-      @conn     = Faraday.new endpoint
+      @conn     = conn || Faraday.new(endpoint)
       yield @conn if block_given?
     end
 
