@@ -3,6 +3,7 @@ require File.expand_path("../helper", __FILE__)
 module Sawyer
   class ResponseTest < TestCase
     def setup
+      @now = Time.now
       @stubs = Faraday::Adapter::Test::Stubs.new
       @agent = Sawyer::Agent.new "http://foo.com" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
@@ -42,6 +43,7 @@ module Sawyer
 
     def test_gets_response_timing
       assert @res.timing > 0
+      assert @res.time >= @now
     end
 
     def test_makes_request_from_relation

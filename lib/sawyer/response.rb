@@ -40,6 +40,10 @@ module Sawyer
       @timing ||= @env[:sawyer_ended] - @env[:sawyer_started]
     end
 
+    def time
+      @env[:sawyer_ended]
+    end
+
     def inspect
       %(#<#{self.class}: #{@status} @rels=#{@rels.inspect} @data=#{@data.inspect}>)
     end
