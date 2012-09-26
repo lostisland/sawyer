@@ -15,6 +15,20 @@ module Sawyer
       yield @conn if block_given?
     end
 
+    # Public: Retains a reference to the root relations of the API.
+    #
+    # Returns a Sawyer::Relation::Map.
+    def rels
+      @rels ||= root.data.rels
+    end
+
+    # Public: Retains a reference to the root response of the API.
+    #
+    # Returns a Sawyer::Response.
+    def root
+      @root ||= start
+    end
+
     # Public: Hits the root of the API to get the initial actions.
     #
     # Returns a Sawyer::Response.

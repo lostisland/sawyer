@@ -10,6 +10,30 @@ module Sawyer
       end
     end
 
+    def test_accesses_root_relations
+      @stubs.get '/a/' do |env|
+        assert_equal 'foo.com', env[:url].host
+
+        [200, {}, Yajl.dump(
+          :_links => {
+            :users => {:href => '/users'}})]
+      end
+
+      assert_equal 200, @agent.root.status
+
+      assert_equal '/users', @agent.rels[:users].href
+      assert_equal :get,     @agent.rels[:users].method
+    end
+
+    def test_saves_root_endpoint
+      @stubs.get '/a/' do |env|
+        [200, {}, '{}']
+      end
+
+      assert_kind_of Sawyer::Response, @agent.root
+      assert_not_equal @agent.root.time, @agent.start.time
+    end
+
     def test_starts_a_session
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
