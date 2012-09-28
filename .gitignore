@@ -3,3 +3,4 @@ vendor/cache
 vendor/gems
 .bundle
 Gemfile.lock
+bin

@@ -1,5 +1,3 @@
-require 'yajl'
-
 module Sawyer
   class Response
     attr_reader :agent,

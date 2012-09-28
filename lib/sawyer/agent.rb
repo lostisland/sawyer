@@ -3,15 +3,34 @@ require 'uri_template'
 
 module Sawyer
   class Agent
-    NO_BODY = Set.new [:get, :head]
+    NO_BODY = Set.new([:get, :head])
+
+    class << self
+      attr_accessor :serializer_class
+    end
+
+    def self.serializer_class
+      @serializer_class ||= begin
+        require File.expand_path("../yajl_serializer", __FILE__)
+        YajlSerializer
+      end
+    end
 
     # Agents handle making the requests, and passing responses to
     # Sawyer::Response.
     #
     # endpoint - String URI of the API entry point.
-    def initialize(endpoint, conn = nil)
+    # options  - Hash of options.
+    #            :faraday    - Optional Faraday::Connection to use.
+    #            :serializer - Optional serializer Class.  Defaults to
+    #                          self.serializer_class.
+    #
+    # Yields the Faraday::Connection if a block is given.
+    def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @conn     = conn || Faraday.new(endpoint)
+      @conn = (options && options[:faraday]) || Faraday.new(endpoint)
+      @serializer = ((options && options[:serializer]) ||
+                      self.class.serializer_class).new
       yield @conn if block_given?
     end
 
@@ -80,7 +99,7 @@ module Sawyer
     #
     # Returns a String.
     def encode_body(data)
-      Yajl.dump data
+      @serializer.encode(data)
     end
 
     # Decodes a String response body to a resource.
@@ -89,7 +108,7 @@ module Sawyer
     #
     # Returns an Object resource (Hash by default).
     def decode_body(str)
-      Yajl.load str, :symbolize_keys => true
+      @serializer.decode(str)
     end
 
     def expand_url(url, options = nil)
