@@ -82,7 +82,7 @@ module Sawyer
 
     def test_encodes_and_decodes_times
       time = Time.at(Time.now.to_i)
-      data = {:a => 1, :b => true, :c => 'c', :created_at => time}
+      data = {:a => 1, :b => true, :c => 'c', :created_at => time, :published_at => nil}
       data = [data.merge(:foo => [data])]
       encoded = Sawyer::Agent.encode(data)
       decoded = Sawyer::Agent.decode(encoded)
@@ -95,6 +95,7 @@ module Sawyer
         assert_equal true, decoded[:b]
         assert_equal 'c', decoded[:c]
         assert_equal time, decoded[:created_at]
+        assert_nil decoded[:published_at]
         decoded = decoded[:foo]
       end
     end
