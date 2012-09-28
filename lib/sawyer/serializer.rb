@@ -6,8 +6,10 @@ module Sawyer
     # Public: Wraps a serialization format for Sawyer.  Nested objects are
     # prepared for serialization (such as changing Times to ISO 8601 Strings).
     # Any serialization format that responds to #dump and #load will work.
-    def initialize(format)
+    def initialize(format, dump_method_name = nil, load_method_name = nil)
       @format = format
+      @dump = @format.method(dump_method_name || :dump)
+      @load = @format.method(load_method_name || :load)
     end
 
     # Public: Encodes an Object (usually a Hash or Array of Hashes).
@@ -16,7 +18,7 @@ module Sawyer
     #
     # Returns an encoded String.
     def encode(data)
-      @format.dump(encode_object(data))
+      @dump.call(encode_object(data))
     end
 
     # Public: Decodes a String into an Object (usually a Hash or Array of
@@ -26,7 +28,7 @@ module Sawyer
     #
     # Returns a decoded Object.
     def decode(data)
-      decode_object(@format.load(data))
+      decode_object(@load.call(data))
     end
 
     def encode_object(data)

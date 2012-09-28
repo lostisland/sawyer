@@ -10,5 +10,6 @@ require 'set'
   resource
   relation
   response
+  serializer
   agent
 ).each { |f| require File.expand_path("../sawyer/#{f}", __FILE__) }

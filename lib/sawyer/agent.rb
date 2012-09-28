@@ -11,7 +11,6 @@ module Sawyer
 
     def self.serializer
       @serializer ||= begin
-        require File.expand_path("../serializer", __FILE__)
         require 'yajl'
         Serializer.new(Yajl)
       end
