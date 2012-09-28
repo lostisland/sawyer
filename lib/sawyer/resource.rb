@@ -1,6 +1,6 @@
 module Sawyer
   class Resource
-    SPECIAL_METHODS = Set.new %w(agent rels fields)
+    SPECIAL_METHODS = Set.new(%w(agent rels fields))
     attr_reader :_agent, :_rels, :_fields
 
     # Initializes a Resource with the given data.
@@ -9,12 +9,14 @@ module Sawyer
     # data  - Hash of key/value properties.
     def initialize(agent, data)
       @_agent  = agent
-      @_rels   = Relation.from_links(agent, data.delete(:_links))
-      @_fields = Set.new []
+      @_rels = Relation.from_links(agent, data.delete(:_links))
+      @_fields = Set.new
+      @_metaclass = (class << self; self; end)
       data.each do |key, value|
         @_fields << key
         instance_variable_set "@#{key}", process_value(value)
       end
+      @_metaclass.send(:attr_accessor, *data.keys)
     end
 
     # Processes an individual value of this resource.  Hashes get exploded
@@ -47,14 +49,14 @@ module Sawyer
     def method_missing(method, *args)
       attr_name, suffix = method.to_s.scan(/([a-z0-9\_]+)(\?|\=)?$/i).first
       if suffix == ATTR_SETTER
-        (class << self; self; end).send :attr_accessor, attr_name
+        @_metaclass.send(:attr_accessor, attr_name)
         @_fields << attr_name.to_sym
-        instance_variable_set "@#{attr_name}", args.first
+        instance_variable_set("@#{attr_name}", args.first)
       elsif @_fields.include?(attr_name.to_sym)
         value = instance_variable_get("@#{attr_name}")
         case suffix
         when nil
-          (class << self; self; end).send :attr_accessor, attr_name
+          @_metaclass.send(:attr_accessor, attr_name)
           value
         when ATTR_PREDICATE then !!value
         end

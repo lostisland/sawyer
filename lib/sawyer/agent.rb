@@ -42,7 +42,7 @@ module Sawyer
     #
     # Returns a Sawyer::Relation::Map.
     def rels
-      @rels ||= root.data.rels
+      @rels ||= root.data._rels
     end
 
     # Public: Retains a reference to the root response of the API.

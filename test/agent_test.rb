@@ -79,6 +79,25 @@ module Sawyer
         :query   => {:foo => 'bar'}
       assert_equal 200, res.status
     end
+
+    def test_encodes_and_decodes_times
+      time = Time.at(Time.now.to_i)
+      data = {:a => 1, :b => true, :c => 'c', :created_at => time}
+      data = [data.merge(:foo => [data])]
+      encoded = Sawyer::Agent.encode(data)
+      decoded = Sawyer::Agent.decode(encoded)
+
+      2.times do
+        assert_equal 1, decoded.size
+        decoded = decoded.shift
+
+        assert_equal 1, decoded[:a]
+        assert_equal true, decoded[:b]
+        assert_equal 'c', decoded[:c]
+        assert_equal time, decoded[:created_at]
+        decoded = decoded[:foo]
+      end
+    end
   end
 end
 

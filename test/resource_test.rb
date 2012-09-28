@@ -75,9 +75,9 @@ module Sawyer
 
     def test_dynamic_attribute_methods_from_getter
       res = Resource.new :agent, :a => 1
-      assert  res.key?(:a)
-      assert !res.respond_to?(:a)
-      assert !res.respond_to?(:a=)
+      assert res.key?(:a)
+      assert res.respond_to?(:a)
+      assert res.respond_to?(:a=)
 
       assert_equal 1, res.a
       assert res.respond_to?(:a)

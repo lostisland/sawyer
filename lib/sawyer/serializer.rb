@@ -63,7 +63,7 @@ module Sawyer
     def encode_object(data)
       case data
       when Hash then encode_hash(data)
-      when Array then data.map { |o| encode_object(data) }
+      when Array then data.map { |o| encode_object(o) }
       else data
       end
     end
@@ -73,6 +73,7 @@ module Sawyer
         case value = hash[key]
         when Date then hash[key] = value.to_time.utc.xmlschema
         when Time then hash[key] = value.utc.xmlschema
+        when Hash then hash[key] = encode_hash(value)
         end
       end
       hash
@@ -81,7 +82,7 @@ module Sawyer
     def decode_object(data)
       case data
       when Hash then decode_hash(data)
-      when Array then data.map { |o| decode_object(data) }
+      when Array then data.map { |o| decode_object(o) }
       else data
       end
     end
@@ -94,10 +95,12 @@ module Sawyer
     end
 
     def decode_hash_value(key, value)
-      if key =~ /^_(at|on)$/
+      if key =~ /_(at|on)$/
         Time.parse(value)
       elsif value.is_a?(Hash)
         decode_hash(value)
+      elsif value.is_a?(Array)
+        value.map { |o| decode_hash_value(key, o) }
       else
         value
       end
