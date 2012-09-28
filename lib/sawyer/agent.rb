@@ -10,10 +10,15 @@ module Sawyer
     end
 
     def self.serializer
-      @serializer ||= begin
-        require 'yajl'
-        Serializer.new(Yajl)
-      end
+      @serializer ||= Serializer.any_json
+    end
+
+    def self.encode(data)
+      serializer.encode(data)
+    end
+
+    def self.decode(data)
+      serializer.decode(data)
     end
 
     # Agents handle making the requests, and passing responses to

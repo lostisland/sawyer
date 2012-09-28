@@ -9,7 +9,7 @@ module Sawyer
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs do |stub|
           stub.get '/' do
-            [200, {'Content-Type' => 'application/json'}, Yajl.dump(
+            [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
               :a => 1,
               :_links => {
                 :self => {:href => '/a', :method => 'POST'}

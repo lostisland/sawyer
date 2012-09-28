@@ -14,7 +14,7 @@ module Sawyer
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
 
-        [200, {}, Yajl.dump(
+        [200, {}, Sawyer::Agent.encode(
           :_links => {
             :users => {:href => '/users'}})]
       end
@@ -38,7 +38,7 @@ module Sawyer
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
 
-        [200, {}, Yajl.dump(
+        [200, {}, Sawyer::Agent.encode(
           :_links => {
             :users => {:href => '/users'}})]
       end

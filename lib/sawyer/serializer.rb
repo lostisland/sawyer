@@ -3,6 +3,34 @@ require 'time'
 
 module Sawyer
   class Serializer
+    def self.any_json
+      yajl || multi_json || json
+    end
+
+    def self.yajl
+      require 'yajl'
+      new(Yajl)
+    rescue LoadError
+    end
+
+    def self.json
+      require 'json'
+      new(JSON)
+    rescue LoadError
+    end
+
+    def self.multi_json
+      require 'multi_json'
+      new(MultiJson)
+    rescue LoadError
+    end
+
+    def self.message_pack
+      require 'msgpack'
+      new(MessagePack, :pack, :unpack)
+    rescue LoadError
+    end
+
     # Public: Wraps a serialization format for Sawyer.  Nested objects are
     # prepared for serialization (such as changing Times to ISO 8601 Strings).
     # Any serialization format that responds to #dump and #load will work.
@@ -28,6 +56,7 @@ module Sawyer
     #
     # Returns a decoded Object.
     def decode(data)
+      return nil if data.nil? || data.empty?
       decode_object(@load.call(data))
     end
 
