@@ -33,8 +33,9 @@ module Sawyer
     # Yields the Faraday::Connection if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @conn = (options && options[:faraday]) || Faraday.new(endpoint)
+      @conn = (options && options[:faraday]) || Faraday.new
       @serializer = (options && options[:serializer]) || self.class.serializer
+      @conn.url_prefix = @endpoint
       yield @conn if block_given?
     end
 
