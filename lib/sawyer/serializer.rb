@@ -95,7 +95,7 @@ module Sawyer
     end
 
     def decode_hash_value(key, value)
-      if key =~ /_(at|on)$/
+      if time_field?(key, value)
         Time.parse(value)
       elsif value.is_a?(Hash)
         decode_hash(value)
@@ -104,6 +104,10 @@ module Sawyer
       else
         value
       end
+    end
+
+    def time_field?(key, value)
+      key =~ /_(at|on)$/
     end
   end
 end
