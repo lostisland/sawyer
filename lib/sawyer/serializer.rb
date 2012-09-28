@@ -49,6 +49,8 @@ module Sawyer
       @dump.call(encode_object(data))
     end
 
+    alias dump encode
+
     # Public: Decodes a String into an Object (usually a Hash or Array of
     # Hashes).
     #
@@ -59,6 +61,8 @@ module Sawyer
       return nil if data.nil? || data.empty?
       decode_object(@load.call(data))
     end
+
+    alias load decode
 
     def encode_object(data)
       case data
