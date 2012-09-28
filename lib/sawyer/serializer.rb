@@ -1,15 +1,32 @@
-require 'yajl'
 require 'date'
 require 'time'
 
 module Sawyer
-  class YajlSerializer
-    def encode(data)
-      Yajl.dump(encode_object(data))
+  class Serializer
+    # Public: Wraps a serialization format for Sawyer.  Nested objects are
+    # prepared for serialization (such as changing Times to ISO 8601 Strings).
+    # Any serialization format that responds to #dump and #load will work.
+    def initialize(format)
+      @format = format
     end
 
+    # Public: Encodes an Object (usually a Hash or Array of Hashes).
+    #
+    # data - Object to be encoded.
+    #
+    # Returns an encoded String.
+    def encode(data)
+      @format.dump(encode_object(data))
+    end
+
+    # Public: Decodes a String into an Object (usually a Hash or Array of
+    # Hashes).
+    #
+    # data - An encoded String.
+    #
+    # Returns a decoded Object.
     def decode(data)
-      decode_object(Yajl.load(data))
+      decode_object(@format.load(data))
     end
 
     def encode_object(data)

@@ -6,13 +6,14 @@ module Sawyer
     NO_BODY = Set.new([:get, :head])
 
     class << self
-      attr_accessor :serializer_class
+      attr_writer :serializer
     end
 
-    def self.serializer_class
-      @serializer_class ||= begin
-        require File.expand_path("../yajl_serializer", __FILE__)
-        YajlSerializer
+    def self.serializer
+      @serializer ||= begin
+        require File.expand_path("../serializer", __FILE__)
+        require 'yajl'
+        Serializer.new(Yajl)
       end
     end
 
@@ -29,8 +30,7 @@ module Sawyer
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
       @conn = (options && options[:faraday]) || Faraday.new(endpoint)
-      @serializer = ((options && options[:serializer]) ||
-                      self.class.serializer_class).new
+      @serializer = (options && options[:serializer]) || self.class.serializer
       yield @conn if block_given?
     end
 
