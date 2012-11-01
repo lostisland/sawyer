@@ -16,6 +16,11 @@ module Sawyer
               }
             )]
           end
+
+          stub.get '/emails' do
+            emails = %w(rick@example.com technoweenie@example.com)
+            [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(emails)]
+          end
         end
       end
 
@@ -54,6 +59,11 @@ module Sawyer
       res = @res.data.rels[:self].call
       assert_equal 201, res.status
       assert_nil res.data
+    end
+
+    def test_handles_arrays_of_strings
+      res = @agent.call(:get, '/emails')
+      assert_equal 'rick@example.com', res.data.first
     end
   end
 end
