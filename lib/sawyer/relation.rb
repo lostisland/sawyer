@@ -82,7 +82,12 @@ module Sawyer
     #
     # Returns a Relation.
     def self.from_link(agent, name, options)
-      new agent, name, options[:href], options[:method]
+      case options
+      when Hash
+        new agent, name, options[:href], options[:method]
+      when String
+        new agent, name, options
+      end
     end
 
     # A Relation represents an available next action for a resource.
