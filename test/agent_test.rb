@@ -2,6 +2,16 @@ require File.expand_path("../helper", __FILE__)
 
 module Sawyer
   class AgentTest < TestCase
+
+    class InlineRelsParser
+      def parse(data)
+        links = {}
+        data.keys.select {|k| k[/_url$/] }.each {|k| links[k.to_s.gsub(/_url$/, '')] = data.delete(k) }
+
+        return data, links
+      end
+    end
+
     def setup
       @stubs = Faraday::Adapter::Test::Stubs.new
       @agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
@@ -23,6 +33,31 @@ module Sawyer
 
       assert_equal '/users', @agent.rels[:users].href
       assert_equal :get,     @agent.rels[:users].method
+    end
+
+    def test_allows_custom_rel_parsing
+      @stubs.get '/a/' do |env|
+        assert_equal 'foo.com', env[:url].host
+
+        [200, {}, Sawyer::Agent.encode(
+          :url => '/',
+          :users_url => '/users',
+          :repos_url => '/repos')]
+      end
+
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test, @stubs
+      end
+      agent.links_parser = InlineRelsParser.new
+
+      assert_equal 200, agent.root.status
+
+      assert_equal '/users', agent.rels[:users].href
+      assert_equal :get,     agent.rels[:users].method
+      assert_equal '/repos', agent.rels[:repos].href
+      assert_equal :get,     agent.rels[:repos].method
+
     end
 
     def test_saves_root_endpoint
