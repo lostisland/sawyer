@@ -95,5 +95,19 @@ module Sawyer
       assert res.respond_to?(:b)
       assert res.respond_to?(:b=)
     end
+
+    def test_attrs
+      res = Resource.new :agent, :a => 1
+      hash = {:a => 1 }
+      assert_equal hash, res.attrs
+    end
+
+    def test_handle_hash_notation_with_string_key
+      res = Resource.new :agent, :a => 1
+      assert_equal 1, res['a']
+
+      res[:b] = 2
+      assert_equal 2, res.b
+    end
   end
 end

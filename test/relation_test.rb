@@ -28,6 +28,23 @@ module Sawyer
       assert_kind_of URITemplate, rel.href_template
     end
 
+    def test_builds_rels_from_hash
+      index = {
+        'self' => '/users/1'
+      }
+
+      rels = Sawyer::Relation.from_links(nil, index)
+
+      assert_equal 1, rels.size
+      assert_equal [:self], rels.keys
+      assert rel = rels[:self]
+      assert_equal :self,      rel.name
+      assert_equal '/users/1', rel.href
+      assert_equal :get,       rel.method
+      assert_equal [:get],     rel.available_methods.to_a
+      assert_kind_of URITemplate, rel.href_template
+    end
+
     def test_builds_rels_from_hash_index
       index = {
         'self' => {:href => '/users/1'}

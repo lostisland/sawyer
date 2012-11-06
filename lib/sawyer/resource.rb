@@ -2,19 +2,22 @@ module Sawyer
   class Resource
     SPECIAL_METHODS = Set.new(%w(agent rels fields))
     attr_reader :_agent, :_rels, :_fields
+    attr_reader :attrs
+    alias to_hash attrs
 
     # Initializes a Resource with the given data.
     #
     # agent - The Sawyer::Agent that made the API request.
     # data  - Hash of key/value properties.
-    def initialize(agent, data)
+    def initialize(agent, data = {})
       @_agent  = agent
       @_rels = Relation.from_links(agent, data.delete(:_links))
       @_fields = Set.new
       @_metaclass = (class << self; self; end)
+      @attrs = {}
       data.each do |key, value|
         @_fields << key
-        instance_variable_set "@#{key}", process_value(value)
+        @attrs[key.to_sym] = process_value(value) 
       end
       @_metaclass.send(:attr_accessor, *data.keys)
     end
@@ -42,6 +45,29 @@ module Sawyer
       @_fields.include? key
     end
 
+    # Allow fields to be retrieved via Hash notation
+    #
+    # method - key name
+    #
+    # Returns the value from attrs if exists
+    def [](method)
+      send(method.to_sym)
+    rescue NoMethodError
+      nil
+    end
+
+    # Allow fields to be set via Hash notation
+    #
+    # method - key name
+    # value - value to set for the attr key
+    #
+    # Returns - value
+    def []=(method, value)
+      send("#{method}=", value)
+    rescue NoMethodError
+      nil
+    end
+
     ATTR_SETTER    = '='.freeze
     ATTR_PREDICATE = '?'.freeze
 
@@ -51,9 +77,9 @@ module Sawyer
       if suffix == ATTR_SETTER
         @_metaclass.send(:attr_accessor, attr_name)
         @_fields << attr_name.to_sym
-        instance_variable_set("@#{attr_name}", args.first)
-      elsif @_fields.include?(attr_name.to_sym)
-        value = instance_variable_get("@#{attr_name}")
+        send(method, args.first)
+      elsif attr_name && @_fields.include?(attr_name.to_sym)
+        value = @attrs[attr_name.to_sym]
         case suffix
         when nil
           @_metaclass.send(:attr_accessor, attr_name)
@@ -64,6 +90,25 @@ module Sawyer
         instance_variable_get "@_#{attr_name}"
       else
         super
+      end
+    end
+
+    # Wire up accessor methods to pull from attrs
+    def self.attr_accessor(*attrs)
+      attrs.each do |attribute|
+        class_eval do
+          define_method attribute do
+            @attrs[attribute.to_sym]
+          end
+
+          define_method "#{attribute}=" do |value|
+            @attrs[attribute.to_sym] = value
+          end
+
+          define_method "#{attribute}?" do
+            !!@attrs[attribute.to_sym]
+          end
+        end
       end
     end
   end
