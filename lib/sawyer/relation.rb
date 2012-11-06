@@ -13,7 +13,7 @@ module Sawyer
       #
       # Returns nothing.
       def <<(rel)
-        @map[rel.name] = rel
+        @map[rel.name] = rel if rel
       end
 
       # Gets the raw Relation by its name.
@@ -99,7 +99,11 @@ module Sawyer
     def initialize(agent, name, href, method = nil)
       @agent = agent
       @name = name.to_sym
-      @href_template = URITemplate.new(href.to_s)
+      @href = href
+      begin
+        @href_template = URITemplate.new(href.to_s)
+      rescue URITemplate::RFC6570::Invalid => e
+      end
 
       methods = nil
 
@@ -230,6 +234,7 @@ module Sawyer
     end
 
     def href(options = nil)
+      return @href if @href_template.nil?
       method = @href_template.method(:expand)
       options ? method.call(options) : method.call
     end

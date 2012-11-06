@@ -126,6 +126,14 @@ module Sawyer
       assert_equal 404, rel.get.status
       assert_equal 200, rel.get(:uri => {'user' => 'octocat', 'repo' => 'hello', 'a' => 1, 'b' => 2}).status
     end
+
+    def test_handles_invalid_uri
+      hash = {:href => '/this has spaces', :method => 'post'}
+      rel  = Sawyer::Relation.from_link(nil, :self, hash)
+
+      assert_equal :self,      rel.name
+      assert_equal '/this has spaces', rel.href
+    end
   end
 end
 

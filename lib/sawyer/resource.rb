@@ -11,7 +11,8 @@ module Sawyer
     # data  - Hash of key/value properties.
     def initialize(agent, data = {})
       @_agent  = agent
-      @_rels = Relation.from_links(agent, data.delete(:_links))
+      data, links = agent.parse_links(data)
+      @_rels = Relation.from_links(agent, links)
       @_fields = Set.new
       @_metaclass = (class << self; self; end)
       @attrs = {}
