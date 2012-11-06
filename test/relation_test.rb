@@ -134,6 +134,33 @@ module Sawyer
       assert_equal :self,      rel.name
       assert_equal '/this has spaces', rel.href
     end
+
+    def test_allows_all_methods_when_not_in_strict_mode
+
+      agent = Sawyer::Agent.new "http://foo.com/a/", :allow_undefined_methods => true do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test do |stubs|
+          stubs.get '/a/1' do
+            [200, {}, '{}']
+          end
+          stubs.delete '/a/1' do
+            [204, {}, '{}']
+          end
+          stubs.post '/a/1' do
+            [200, {}, '{}']
+          end
+          stubs.put '/a/1' do
+            [204, {}, '{}']
+          end
+        end
+      end
+
+      rel = Sawyer::Relation.new agent, :self, "/a/1"
+      assert_equal 200, rel.get.status
+      assert_equal 200, rel.post.status
+      assert_equal 204, rel.put.status
+      assert_equal 204, rel.delete.status
+    end
   end
 end
 

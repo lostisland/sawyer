@@ -6,6 +6,7 @@ module Sawyer
     NO_BODY = Set.new([:get, :head])
 
     attr_accessor :links_parser
+    attr_accessor :allow_undefined_methods
 
     class << self
       attr_writer :serializer
@@ -38,6 +39,7 @@ module Sawyer
       @conn = (options && options[:faraday]) || Faraday.new
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || HalLinksParser.new
+      @allow_undefined_methods = (options && options[:allow_undefined_methods])
       @conn.url_prefix = @endpoint
       yield @conn if block_given?
     end
@@ -127,6 +129,10 @@ module Sawyer
       tpl = url.respond_to?(:expand) ? url : URITemplate.new(url.to_s)
       expand = tpl.method(:expand)
       options ? expand.call(options) : expand.call
+    end
+
+    def allow_undefined_methods?
+      !!@allow_undefined_methods
     end
 
     def inspect

@@ -253,7 +253,7 @@ module Sawyer
     # Returns a Sawyer::Response.
     def call(data = nil, options = nil)
       m = options && options[:method]
-      if m && !@available_methods.include?(m == :head ? :get : m)
+      if m && !@agent.allow_undefined_methods? && !@available_methods.include?(m == :head ? :get : m)
         raise ArgumentError, "method #{m.inspect} is not available: #{@available_methods.to_a.inspect}"
       end
 
