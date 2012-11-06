@@ -5,6 +5,8 @@ module Sawyer
   class Agent
     NO_BODY = Set.new([:get, :head])
 
+    attr_accessor :links_parser
+
     class << self
       attr_writer :serializer
     end
@@ -35,6 +37,7 @@ module Sawyer
       @endpoint = endpoint
       @conn = (options && options[:faraday]) || Faraday.new
       @serializer = (options && options[:serializer]) || self.class.serializer
+      @links_parser = (options && options[:links_parser]) || HalLinksParser.new
       @conn.url_prefix = @endpoint
       yield @conn if block_given?
     end
@@ -114,6 +117,10 @@ module Sawyer
     # Returns an Object resource (Hash by default).
     def decode_body(str)
       @serializer.decode(str)
+    end
+
+    def parse_links(data)
+      @links_parser.parse(data)
     end
 
     def expand_url(url, options = nil)
