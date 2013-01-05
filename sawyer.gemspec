@@ -1,78 +1,33 @@
-## This is the rakegem gemspec template. Make sure you read and understand
-## all of the comments. Some sections require modification, and others can
-## be deleted if you don't need them. Once you understand the contents of
-## this file, feel free to delete any comments that begin with two hash marks.
-## You can find comprehensive Gem::Specification documentation, at
-## http://docs.rubygems.org/read/chapter/20
-Gem::Specification.new do |s|
-  s.specification_version = 2 if s.respond_to? :specification_version=
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.rubygems_version = '1.3.5'
+lib = "sawyer"
+lib_file = File.expand_path("../lib/#{lib}.rb", __FILE__)
+File.read(lib_file) =~ /\bVERSION\s*=\s*["'](.+?)["']/
+version = $1
 
-  ## Leave these as is they will be modified for you by the rake gemspec task.
-  ## If your rubyforge_project name is different, then edit it and comment out
-  ## the sub! line in the Rakefile
-  s.name              = 'sawyer'
-  s.version           = '0.0.5'
-  s.date              = '2012-09-28'
-  s.rubyforge_project = 'sawyer'
+Gem::Specification.new do |spec|
+  spec.specification_version = 2 if spec.respond_to? :specification_version=
+  spec.required_rubygems_version = Gem::Requirement.new(">= 1.3.5") if spec.respond_to? :required_rubygems_version=
 
-  ## Make sure your summary is short. The description may be as long
-  ## as you like.
-  s.summary     = "Secret User Agent of HTTP"
-  s.description = "#{s.summary} built on Faraday"
+  spec.name    = lib
+  spec.version = version
 
-  ## List the primary authors. If there are a bunch of authors, it's probably
-  ## better to set the email to an email list or something. If you don't have
-  ## a custom homepage, consider using your GitHub URL or the like.
-  s.authors  = ["Rick Olson"]
-  s.email    = 'technoweenie@gmail.com'
-  s.homepage = 'https://github.com/technoweenie/sawyer'
+  spec.summary = "Secret User Agent of HTTP"
 
-  ## This gets added to the $LOAD_PATH so that 'lib/NAME.rb' can be required as
-  ## require 'NAME.rb' or'/lib/NAME/file.rb' can be as require 'NAME/file.rb'
-  s.require_paths = %w[lib]
+  spec.authors  = ["Rick Olson"]
+  spec.email    = 'technoweenie@gmail.com'
+  spec.homepage = 'https://github.com/technoweenie/faraday'
+  spec.licenses = ['MIT']
 
-  ## List your runtime dependencies here. Runtime dependencies are those
-  ## that are needed for an end user to actually USE your code.
-  s.add_dependency('faraday',      ['~> 0.8.4'])
-  s.add_dependency('uri_template', ['~> 0.5.0'])
+  spec.add_dependency 'faraday',      ['~> 0.8.4']
+  spec.add_dependency 'uri_template', ['~> 0.5.0']
 
-  ## List your development dependencies here. Development dependencies are
-  ## those that are only needed during development
-  #s.add_development_dependency('DEVDEPNAME', [">= 1.1.0", "< 2.0.0"])
+  spec.files = %w(Gemfile LICENSE.md README.md Rakefile)
+  spec.files << "#{lib}.gemspec"
+  spec.files += Dir.glob("lib/**/*.rb")
+  spec.files += Dir.glob("test/**/*.rb")
+  spec.files += Dir.glob("script/*")
 
-  ## Leave this section as-is. It will be automatically generated from the
-  ## contents of your Git repository via the gemspec task. DO NOT REMOVE
-  ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
-  # = MANIFEST =
-  s.files = %w[
-    Gemfile
-    LICENSE.md
-    README.md
-    Rakefile
-    SPEC.md
-    example/client.rb
-    example/nigiri.schema.json
-    example/server.rb
-    example/user.schema.json
-    lib/sawyer.rb
-    lib/sawyer/agent.rb
-    lib/sawyer/relation.rb
-    lib/sawyer/resource.rb
-    lib/sawyer/response.rb
-    lib/sawyer/serializer.rb
-    sawyer.gemspec
-    test/agent_test.rb
-    test/helper.rb
-    test/relation_test.rb
-    test/resource_test.rb
-    test/response_test.rb
-  ]
-  # = MANIFEST =
-
-  ## Test files will be grabbed from the file list. Make sure the path glob
-  ## matches what you actually use.
-  s.test_files = s.files.select { |path| path =~ /^test\/.*_test\.rb/ }
+  dev_null    = File.exist?('/dev/null') ? '/dev/null' : 'NUL'
+  git_files   = `git ls-files -z 2>#{dev_null}`
+  spec.files &= git_files.split("\0") if $?.success?
 end
 
