@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.authors  = ["Rick Olson"]
   spec.email    = 'technoweenie@gmail.com'
-  spec.homepage = 'https://github.com/technoweenie/faraday'
+  spec.homepage = 'https://github.com/lostisland/sawyer'
   spec.licenses = ['MIT']
 
   spec.add_dependency 'faraday',      ['~> 0.8.4']
