@@ -3,6 +3,8 @@
 Sawyer is an experimental secret user agent built on top of
 [Faraday][faraday].
 
+[faraday]: https://github.com/lostisland/faraday
+
 ![](http://techno-weenie.net/sawyer/images/faraday.jpeg)
 
 Think of Faraday as the nerdy scientist behind an HTTP API.  Sure, he
