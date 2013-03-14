@@ -12,5 +12,6 @@ require 'set'
   response
   serializer
   agent
-  hal_rels_parser
+  link_parsers/hal
+  link_parsers/simple
 ).each { |f| require File.expand_path("../sawyer/#{f}", __FILE__) }
