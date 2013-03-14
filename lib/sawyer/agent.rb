@@ -38,7 +38,7 @@ module Sawyer
       @endpoint = endpoint
       @conn = (options && options[:faraday]) || Faraday.new
       @serializer = (options && options[:serializer]) || self.class.serializer
-      @links_parser = (options && options[:links_parser]) || HalLinksParser.new
+      @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
       @conn.url_prefix = @endpoint
       yield @conn if block_given?
