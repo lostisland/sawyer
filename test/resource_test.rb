@@ -118,5 +118,22 @@ module Sawyer
       res[:b] = 2
       assert_equal 2, res.b
     end
+
+    def test_simple_rel_parsing
+      @agent.links_parser = Sawyer::LinkParsers::Simple.new
+      res = Resource.new @agent,
+        :url => '/',
+        :user   => {
+          :id => 1,
+          :url => '/users/1',
+          :followers_url => '/users/1/followers'
+        }
+
+      assert_equal '/', res.rels[:self].href
+      assert_kind_of Resource, res.user
+      assert_equal 1, res.user.id
+      assert_equal '/users/1', res.user.rels[:self].href
+      assert_equal '/users/1/followers', res.user.rels[:followers].href
+    end
   end
 end
