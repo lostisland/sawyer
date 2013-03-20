@@ -131,9 +131,12 @@ module Sawyer
 
       assert_equal '/', res.rels[:self].href
       assert_kind_of Resource, res.user
+      assert !res.fields.include?(:url)
       assert_equal 1, res.user.id
       assert_equal '/users/1', res.user.rels[:self].href
+      assert !res.user.fields.include?(:url)
       assert_equal '/users/1/followers', res.user.rels[:followers].href
+      assert !res.user.fields.include?(:followers_url)
     end
   end
 end
