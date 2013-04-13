@@ -16,6 +16,7 @@ module Sawyer
       @headers = res.headers
       @env     = res.env
       @data    = process_data(@agent.decode_body(res.body))
+      @rels    = process_rels
     end
 
     # Turns parsed contents from an API response into a Resource or
@@ -31,6 +32,19 @@ module Sawyer
       when nil   then nil
       else data
       end
+    end
+
+    # Finds link relations from 'Link' response header
+    #
+    # Returns an array of Relations
+    def process_rels
+      links = ( @headers["Link"] || "" ).split(', ').map do |link|
+        href, name = link.match(/<(.*?)>; rel="(\w+)"/).captures
+
+        [name.to_sym, Relation.from_link(@agent, name, :href => href)]
+      end
+
+      Hash[*links.flatten]
     end
 
     def timing

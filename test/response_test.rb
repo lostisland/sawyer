@@ -9,7 +9,10 @@ module Sawyer
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs do |stub|
           stub.get '/' do
-            [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
+            [200, {
+              'Content-Type' => 'application/json',
+              'Link' =>  '</starred?page=2>; rel="next", </starred?page=19>; rel="last"'
+              }, Sawyer::Agent.encode(
               :a => 1,
               :_links => {
                 :self => {:href => '/a', :method => 'POST'}
@@ -42,6 +45,10 @@ module Sawyer
     end
 
     def test_gets_rels
+      assert_equal '/starred?page=2', @res.rels[:next].href
+      assert_equal :get, @res.rels[:next].method
+      assert_equal '/starred?page=19', @res.rels[:last].href
+      assert_equal :get, @res.rels[:next].method
       assert_equal '/a',  @res.data.rels[:self].href
       assert_equal :post, @res.data.rels[:self].method
     end
