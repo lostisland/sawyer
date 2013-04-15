@@ -60,7 +60,7 @@ module Sawyer
 
     def test_makes_request_from_relation
       @stubs.post '/a' do
-        [201, {}, ""]
+        [201, {'Content-Type' => 'application/json'}, ""]
       end
 
       res = @res.data.rels[:self].call

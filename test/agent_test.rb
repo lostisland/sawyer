@@ -24,7 +24,7 @@ module Sawyer
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
 
-        [200, {}, Sawyer::Agent.encode(
+        [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
           :_links => {
             :users => {:href => '/users'}})]
       end
@@ -39,7 +39,7 @@ module Sawyer
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
 
-        [200, {}, Sawyer::Agent.encode(
+        [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
           :url => '/',
           :users_url => '/users',
           :repos_url => '/repos')]
@@ -73,7 +73,7 @@ module Sawyer
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
 
-        [200, {}, Sawyer::Agent.encode(
+        [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
           :_links => {
             :users => {:href => '/users'}})]
       end
@@ -133,6 +133,19 @@ module Sawyer
         assert_nil decoded[:published_at]
         decoded = decoded[:foo]
       end
+    end
+
+    def test_does_not_encode_non_json_content_types
+      @stubs.get '/a/' do |env|
+        assert_equal 'foo.com', env[:url].host
+
+        [200, {'Content-Type' => 'text/plain'}, "This is plain text"]
+      end
+      res = @agent.call :get, '/a/',
+        :headers => {"Accept" => "text/plain"}
+      assert_equal 200, res.status
+
+      assert_equal "This is plain text", res.data
     end
   end
 end
