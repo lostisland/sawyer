@@ -29,9 +29,13 @@ module Sawyer
     #
     # endpoint - String URI of the API entry point.
     # options  - Hash of options.
-    #            :faraday    - Optional Faraday::Connection to use.
-    #            :serializer - Optional serializer Class.  Defaults to
-    #                          self.serializer_class.
+    #            :allow_undefined_methods  - Allow relations to call all the HTTP verbs,
+    #                                        not just the ones defined.
+    #            :faraday                  - Optional Faraday::Connection to use.
+    #            :links_parser             - Optional parser to parse link relations
+    #                                        Defaults: Sawyer::LinkParsers::Hal.new
+    #            :serializer               - Optional serializer Class.  Defaults to
+    #                                        self.serializer_class.
     #
     # Yields the Faraday::Connection if a block is given.
     def initialize(endpoint, options = nil)
