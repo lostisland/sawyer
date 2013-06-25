@@ -101,10 +101,8 @@ module Sawyer
         end
         started = Time.now
       end
-      res.env[:sawyer_started] = started
-      res.env[:sawyer_ended] = Time.now
 
-      Response.new self, res
+      Response.new self, res, :sawyer_started => started, :sawyer_ended => Time.now
     end
 
     # Encodes an object to a string for the API request.

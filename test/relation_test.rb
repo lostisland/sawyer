@@ -104,7 +104,7 @@ module Sawyer
     end
 
     def test_relation_api_calls_with_uri_tempate
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+      agent = Sawyer::Agent.new "http://foo.com/a" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
           stubs.get '/octocat/hello' do |env|
