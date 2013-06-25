@@ -10,13 +10,15 @@ module Sawyer
     #
     # agent - The Sawyer::Agent that is managing the API connection.
     # res   - A Faraday::Response.
-    def initialize(agent, res)
+    def initialize(agent, res, options = {})
       @agent   = agent
       @status  = res.status
       @headers = res.headers
       @env     = res.env
       @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
       @rels    = process_rels
+      @started = options[:sawyer_started]
+      @ended   = options[:sawyer_ended]
     end
 
     # Turns parsed contents from an API response into a Resource or
@@ -48,11 +50,11 @@ module Sawyer
     end
 
     def timing
-      @timing ||= @env[:sawyer_ended] - @env[:sawyer_started]
+      @timing ||= @ended - @started
     end
 
     def time
-      @env[:sawyer_ended]
+      @ended
     end
 
     def inspect
