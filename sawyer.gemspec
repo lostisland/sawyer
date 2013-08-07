@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Secret User Agent of HTTP"
 
-  spec.authors  = ["Rick Olson"]
+  spec.authors  = ["Rick Olson", "Wynn Netherland"]
   spec.email    = 'technoweenie@gmail.com'
   spec.homepage = 'https://github.com/lostisland/sawyer'
   spec.licenses = ['MIT']
