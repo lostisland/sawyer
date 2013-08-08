@@ -112,6 +112,12 @@ module Sawyer
         end
       end
     end
+
+    # private
+    def to_yaml_properties
+      [:@attrs, :@_fields, :@_rels]
+    end
+
   end
 end
 

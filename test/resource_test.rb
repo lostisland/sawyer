@@ -138,5 +138,13 @@ module Sawyer
       assert_equal '/users/1/followers', res.user.rels[:followers].href
       assert !res.user.fields.include?(:followers_url)
     end
+
+    def test_handle_yaml_dump
+      assert_nothing_raised do
+        require 'yaml'
+        res = Resource.new @agent, :a => 1
+        YAML.dump(res)
+      end
+    end
   end
 end
