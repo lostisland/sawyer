@@ -1,5 +1,7 @@
 require File.expand_path("../helper", __FILE__)
 
+require 'faraday/adapter/test'
+
 module Sawyer
   class AgentTest < TestCase
 
