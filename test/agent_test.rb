@@ -149,6 +149,14 @@ module Sawyer
 
       assert_equal "This is plain text", res.data
     end
+
+    def test_handle_yaml_dump_and_load
+      assert_nothing_raised do
+        require 'yaml'
+        res = Agent.new 'http://example.com', :a => 1
+        YAML.load(YAML.dump(res))
+      end
+    end
   end
 end
 
