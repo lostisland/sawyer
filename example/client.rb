@@ -2,7 +2,7 @@ require File.expand_path("../../lib/sawyer", __FILE__)
 require 'faraday'
 require 'pp'
 
-endpoint = "http://localhost:9393/"
+endpoint = "http://localhost:4567/"
 agent    = Sawyer::Agent.new(endpoint) do |http|
   http.headers['content-type'] = 'application/json'
 end
