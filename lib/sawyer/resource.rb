@@ -82,13 +82,15 @@ module Sawyer
       elsif attr_name && @_fields.include?(attr_name.to_sym)
         value = @attrs[attr_name.to_sym]
         case suffix
-        when nil
-          @_metaclass.send(:attr_accessor, attr_name)
-          value
-        when ATTR_PREDICATE then !!value
-        end
+             when nil
+               @_metaclass.send(:attr_accessor, attr_name)
+               value
+             when ATTR_PREDICATE then !!value
+             end
       elsif suffix.nil? && SPECIAL_METHODS.include?(attr_name)
         instance_variable_get "@_#{attr_name}"
+      elsif attr_name && !@_fields.include?(attr_name.to_sym)
+        nil
       else
         super
       end

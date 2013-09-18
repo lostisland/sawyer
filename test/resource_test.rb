@@ -93,6 +93,17 @@ module Sawyer
       assert res.respond_to?(:a=)
     end
 
+    def test_nillable_attribute_getters
+      res = Resource.new @agent, :a => 1
+      assert !res.key?(:b)
+      assert !res.respond_to?(:b)
+      assert !res.respond_to?(:b=)
+      assert_nil res.b
+      assert_nothing_raised do
+        res.b
+      end
+    end
+
     def test_dynamic_attribute_methods_from_setter
       res = Resource.new @agent, :a => 1
       assert !res.key?(:b)
