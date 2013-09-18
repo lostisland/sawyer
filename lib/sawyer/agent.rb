@@ -140,6 +140,12 @@ module Sawyer
     def inspect
       %(<#{self.class} #{@endpoint}>)
     end
+
+    # private
+    def to_yaml_properties
+      [:@endpoint]
+    end
+
   end
 end
 
