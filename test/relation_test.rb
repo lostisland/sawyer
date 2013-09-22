@@ -25,7 +25,7 @@ module Sawyer
       assert_equal '/comments',   rel.href
       assert_equal :get,          rel.method
       assert_equal [:get, :post], rel.available_methods.to_a
-      assert_kind_of URITemplate, rel.href_template
+      assert_kind_of Addressable::Template, rel.href_template
     end
 
     def test_builds_rels_from_hash
@@ -42,7 +42,7 @@ module Sawyer
       assert_equal '/users/1', rel.href
       assert_equal :get,       rel.method
       assert_equal [:get],     rel.available_methods.to_a
-      assert_kind_of URITemplate, rel.href_template
+      assert_kind_of Addressable::Template, rel.href_template
     end
 
     def test_builds_rels_from_hash_index
@@ -59,7 +59,7 @@ module Sawyer
       assert_equal '/users/1', rel.href
       assert_equal :get,       rel.method
       assert_equal [:get],     rel.available_methods.to_a
-      assert_kind_of URITemplate, rel.href_template
+      assert_kind_of Addressable::Template, rel.href_template
     end
 
     def test_builds_rels_from_nil
@@ -163,4 +163,3 @@ module Sawyer
     end
   end
 end
-

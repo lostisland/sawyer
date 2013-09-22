@@ -1,5 +1,5 @@
 require 'faraday'
-require 'uri_template'
+require 'addressable/template'
 
 module Sawyer
   class Agent
@@ -128,9 +128,8 @@ module Sawyer
     end
 
     def expand_url(url, options = nil)
-      tpl = url.respond_to?(:expand) ? url : URITemplate.new(url.to_s)
-      expand = tpl.method(:expand)
-      options ? expand.call(options) : expand.call
+      tpl = url.respond_to?(:expand) ? url : Addressable::Template.new(url.to_s)
+      tpl.expand(options || {}).to_s
     end
 
     def allow_undefined_methods?
@@ -148,4 +147,3 @@ module Sawyer
 
   end
 end
-
