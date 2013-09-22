@@ -100,10 +100,7 @@ module Sawyer
       @agent = agent
       @name = name.to_sym
       @href = href
-      begin
-        @href_template = URITemplate.new(href.to_s)
-      rescue URITemplate::RFC6570::Invalid => e
-      end
+      @href_template = Addressable::Template.new(href.to_s)
 
       methods = nil
 
@@ -235,8 +232,7 @@ module Sawyer
 
     def href(options = nil)
       return @href if @href_template.nil?
-      method = @href_template.method(:expand)
-      options ? method.call(options) : method.call
+      @href_template.expand(options || {}).to_s
     end
 
     # Public: Makes an API request with the curent Relation.
@@ -265,4 +261,3 @@ module Sawyer
     end
   end
 end
-

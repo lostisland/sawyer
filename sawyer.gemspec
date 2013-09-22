@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.licenses = ['MIT']
 
   spec.add_dependency 'faraday',      ['~> 0.8', '< 0.10']
-  spec.add_dependency 'uri_template', ['~> 0.5.0']
+  spec.add_dependency 'addressable', ['~> 2.3.5']
 
   spec.files = %w(Gemfile LICENSE.md README.md Rakefile)
   spec.files << "#{lib}.gemspec"
@@ -30,4 +30,3 @@ Gem::Specification.new do |spec|
   git_files   = `git ls-files -z 2>#{dev_null}`
   spec.files &= git_files.split("\0") if $?.success?
 end
-
