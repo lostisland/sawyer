@@ -92,7 +92,9 @@ module Sawyer
       url = expand_url(url, options[:uri])
       started = nil
       res = @conn.send method, url do |req|
-        req.body = encode_body(data) if data
+        if data
+          req.body = data.is_a?(String) ? data : encode_body(data)
+        end
         if params = options[:query]
           req.params.update params
         end
