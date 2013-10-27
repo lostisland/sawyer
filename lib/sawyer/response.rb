@@ -3,6 +3,7 @@ module Sawyer
     attr_reader :agent,
       :status,
       :headers,
+      :body,
       :data,
       :rels
 
@@ -15,7 +16,8 @@ module Sawyer
       @status  = res.status
       @headers = res.headers
       @env     = res.env
-      @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
+      @body    = res.body
+      @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(body)) : body
       @rels    = process_rels
       @started = options[:sawyer_started]
       @ended   = options[:sawyer_ended]

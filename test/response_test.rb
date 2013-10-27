@@ -5,6 +5,12 @@ module Sawyer
     def setup
       @now = Time.now
       @stubs = Faraday::Adapter::Test::Stubs.new
+      @body = Sawyer::Agent.encode(
+        :a => 1,
+        :_links => {
+          :self => {:href => '/a', :method => 'POST'}
+        }
+      )
       @agent = Sawyer::Agent.new "http://foo.com" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs do |stub|
@@ -12,12 +18,7 @@ module Sawyer
             [200, {
               'Content-Type' => 'application/json',
               'Link' =>  '</starred?page=2>; rel="next", </starred?page=19>; rel="last"'
-              }, Sawyer::Agent.encode(
-              :a => 1,
-              :_links => {
-                :self => {:href => '/a', :method => 'POST'}
-              }
-            )]
+              }, @body]
           end
 
           stub.get '/emails' do
@@ -40,6 +41,10 @@ module Sawyer
     end
 
     def test_gets_body
+      assert_equal @body, @res.body
+    end
+
+    def test_gets_data
       assert_equal 1, @res.data.a
       assert_equal [:a], @res.data.fields.to_a
     end
