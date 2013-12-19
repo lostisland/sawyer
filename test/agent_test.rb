@@ -126,7 +126,8 @@ module Sawyer
         :created_at => time,
         :published_at => nil,
         :updated_at => "An invalid date",
-        :pub_date => time
+        :pub_date => time,
+        :validate => true
       }
       data = [data.merge(:foo => [data])]
       encoded = Sawyer::Agent.encode(data)
@@ -139,10 +140,11 @@ module Sawyer
         assert_equal 1, decoded[:a]
         assert_equal true, decoded[:b]
         assert_equal 'c', decoded[:c]
-        assert_equal time, decoded[:created_at]
+        assert_equal time, decoded[:created_at], "Did not parse created_at as Time"
         assert_nil decoded[:published_at]
         assert_equal "An invalid date", decoded[:updated_at]
-        assert_equal time, decoded[:pub_date]
+        assert_equal time, decoded[:pub_date], "Did not parse pub_date as Time"
+        assert_equal true, decoded[:validate]
         decoded = decoded[:foo]
       end
     end

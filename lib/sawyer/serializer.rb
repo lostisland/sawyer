@@ -115,7 +115,7 @@ module Sawyer
     end
 
     def time_field?(key, value)
-      value && (key =~ /_(at|on)$/ || key =~ /_?(date)$/)
+      value && (key =~ /_(at|on)\z/ || key =~ /(\A|_)date\z/)
     end
   end
 end
