@@ -4,6 +4,7 @@ module Sawyer
     attr_reader :_agent, :_rels, :_fields
     attr_reader :attrs
     alias to_hash attrs
+    alias to_h attrs
 
     # Initializes a Resource with the given data.
     #
