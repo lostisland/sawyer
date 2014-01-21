@@ -157,5 +157,12 @@ module Sawyer
         YAML.dump(res)
       end
     end
+
+    def test_handle_marshal_dump
+      assert_nothing_raised do
+        res = Resource.new @agent, :a => 1
+        Marshal.dump(res)
+      end
+    end
   end
 end

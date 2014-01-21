@@ -147,5 +147,12 @@ module Sawyer
       [:@endpoint]
     end
 
+    def marshal_dump
+      [@endpoint]
+    end
+
+    def marshal_load(dumped)
+      @endpoint = *dumped.shift(1)
+    end
   end
 end
