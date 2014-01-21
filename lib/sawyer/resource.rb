@@ -18,7 +18,7 @@ module Sawyer
       @attrs = {}
       data.each do |key, value|
         @_fields << key
-        @attrs[key.to_sym] = process_value(value) 
+        @attrs[key.to_sym] = process_value(value)
       end
       @_metaclass.send(:attr_accessor, *data.keys)
     end
@@ -120,6 +120,13 @@ module Sawyer
       [:@attrs, :@_fields, :@_rels]
     end
 
+    def marshal_dump
+      [@attrs, @_fields, @_rels]
+    end
+
+    def marshal_load(dumped)
+      @attrs, @_fields, @_rels = *dumped.shift(3)
+    end
   end
 end
 

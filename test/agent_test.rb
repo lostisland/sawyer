@@ -169,6 +169,13 @@ module Sawyer
         YAML.load(YAML.dump(res))
       end
     end
+
+    def test_handle_marshal_dump_and_load
+      assert_nothing_raised do
+        res = Agent.new 'http://example.com', :a => 1
+        Marshal.load(Marshal.dump(res))
+      end
+    end
   end
 end
 
