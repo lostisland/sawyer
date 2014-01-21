@@ -1,5 +1,5 @@
 module Sawyer
-  VERSION = "0.5.2"
+  VERSION = "0.5.3"
 
   class Error < StandardError; end
 end
