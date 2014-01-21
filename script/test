@@ -2,4 +2,5 @@
 # Usage: script/test
 # Runs the library's test suite.
 
+script/bootstrap
 bundle exec rake test
