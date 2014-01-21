@@ -122,6 +122,12 @@ module Sawyer
       assert_equal hash, res.attrs
     end
 
+    def test_to_h
+      res = Resource.new @agent, :a => 1
+      hash = {:a => 1 }
+      assert_equal hash, res.to_h
+    end
+
     def test_handle_hash_notation_with_string_key
       res = Resource.new @agent, :a => 1
       assert_equal 1, res['a']
