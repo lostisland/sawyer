@@ -166,8 +166,9 @@ module Sawyer
 
     def test_handle_marshal_dump
       assert_nothing_raised do
-        res = Resource.new @agent, :a => 1
-        Marshal.dump(res)
+        dump = Marshal.dump(Resource.new(@agent, :a => 1))
+        resource = Marshal.load(dump)
+        assert_equal 1, resource.a
       end
     end
   end
