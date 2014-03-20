@@ -116,9 +116,23 @@ module Sawyer
       end
     end
 
+    def inspect
+      to_attrs.respond_to?(:pretty_inspect) ? to_attrs.pretty_inspect : to_attrs.inspect
+    end
+
     # private
     def to_yaml_properties
       [:@attrs, :@_fields, :@_rels]
+    end
+
+    def to_attrs
+      hash = self.attrs.clone
+      hash.keys.each do |k|
+        if hash[k].is_a?(Sawyer::Resource)
+          hash[k] = hash[k].to_attrs
+        end
+      end
+      hash
     end
 
     def marshal_dump
