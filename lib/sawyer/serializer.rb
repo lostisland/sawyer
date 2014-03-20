@@ -104,6 +104,8 @@ module Sawyer
           Time.parse(value)
         rescue ArgumentError
           value
+        rescue TypeError
+          value
         end
       elsif value.is_a?(Hash)
         decode_hash(value)
