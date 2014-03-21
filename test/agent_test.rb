@@ -127,6 +127,9 @@ module Sawyer
         :published_at => nil,
         :updated_at => "An invalid date",
         :pub_date => time,
+        :subscribed_at => time.to_i,
+        :lost_at => time.to_f,
+        :first_date => false,
         :validate => true
       }
       data = [data.merge(:foo => [data])]

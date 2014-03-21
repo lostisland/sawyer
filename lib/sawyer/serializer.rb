@@ -99,7 +99,7 @@ module Sawyer
     end
 
     def decode_hash_value(key, value)
-      if time_field?(key, value)
+      if value.is_a?(String) && time_field?(key, value)
         begin
           Time.parse(value)
         rescue ArgumentError
