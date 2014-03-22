@@ -161,5 +161,14 @@ module Sawyer
       assert_equal 204, rel.put.status
       assert_equal 204, rel.delete.status
     end
+
+    def test_map_inspect
+      map = Sawyer::Relation::Map.new
+      hash = {:href => '/users/1', :method => 'post'}
+      rel  = Sawyer::Relation.from_link(nil, :self, hash)
+      map << rel
+
+      assert_equal "{:self_url=>\"/users/1\"}\n", map.inspect
+    end
   end
 end

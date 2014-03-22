@@ -38,9 +38,17 @@ module Sawyer
       def keys
         @map.keys
       end
+      def to_hash
+        pairs = @map.map do |k, v|
+          [(k.to_s + "_url").to_sym, v.href]
+        end
+        Hash[pairs]
+      end
+      alias :to_h :to_hash
 
       def inspect
-        %(#<#{self.class}: #{@map.keys.inspect}>)
+        hash = to_hash
+        hash.respond_to?(:pretty_inspect) ? hash.pretty_inspect : hash.inspect
       end
     end
 

@@ -170,5 +170,10 @@ module Sawyer
         Marshal.dump(res)
       end
     end
+
+    def test_inspect
+      resource = Resource.new @agent, :a => 1
+      assert_equal "{:a=>1}\n", resource.inspect
+    end
   end
 end
