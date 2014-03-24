@@ -127,6 +127,9 @@ module Sawyer
         :published_at => nil,
         :updated_at => "An invalid date",
         :pub_date => time,
+        :subscribed_at => time.to_i,
+        :lost_at => time.to_f,
+        :first_date => false,
         :validate => true
       }
       data = [data.merge(:foo => [data])]
@@ -145,6 +148,9 @@ module Sawyer
         assert_equal "An invalid date", decoded[:updated_at]
         assert_equal time, decoded[:pub_date], "Did not parse pub_date as Time"
         assert_equal true, decoded[:validate]
+        assert_equal time, decoded[:subscribed_at], "Did not parse subscribed_at as Time"
+        assert_equal time, decoded[:lost_at], "Did not parse lost_at as Time"
+        assert_equal false, decoded[:first_date], "Parsed first_date"
         decoded = decoded[:foo]
       end
     end

@@ -100,9 +100,15 @@ module Sawyer
 
     def decode_hash_value(key, value)
       if time_field?(key, value)
-        begin
-          Time.parse(value)
-        rescue ArgumentError
+        if value.is_a?(String)
+          begin
+            Time.parse(value)
+          rescue ArgumentError
+            value
+          end
+        elsif value.is_a?(Integer) || value.is_a?(Float)
+          Time.at(value)
+        else
           value
         end
       elsif value.is_a?(Hash)
