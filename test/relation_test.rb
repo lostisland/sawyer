@@ -72,6 +72,9 @@ module Sawyer
       agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
+          stubs.head '/a/1' do
+            [200, {}, '{}']
+          end
           stubs.get '/a/1' do
             [200, {}, '{}']
           end
@@ -88,7 +91,7 @@ module Sawyer
       end
 
       assert_equal 200, rel.call.status
-      assert_equal 200, rel.call(:method => :head).status
+      assert_equal 200, rel.call(nil, :method => :head).status
       assert_equal 204, rel.call(nil, :method => :delete).status
       assert_raises ArgumentError do
         rel.call nil, :method => :post
@@ -169,6 +172,42 @@ module Sawyer
       map << rel
 
       assert_equal "{:self_url=>\"/users/1\"}\n", map.inspect
+    end
+
+    def test_head_forces_head_request
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test do |stubs|
+          stubs.get '/a/1' do
+            [405, {}, '{}']
+          end
+          stubs.head '/a/1' do
+            [200, {}, '{}']
+          end
+        end
+      end
+
+      rel = Sawyer::Relation.new agent, :self, "/a/1"
+      assert_equal 405, rel.call.status
+      assert_equal 200, rel.head.status
+    end
+
+    def test_get_forces_get_request
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test do |stubs|
+          stubs.get '/a/1' do
+            [200, {}, '{}']
+          end
+          stubs.head '/a/1' do
+            [405, {}, '{}']
+          end
+        end
+      end
+
+      rel = Sawyer::Relation.new agent, :self, "/a/1", "head, get"
+      assert_equal 405, rel.call.status
+      assert_equal 200, rel.get.status
     end
   end
 end
