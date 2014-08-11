@@ -141,6 +141,7 @@ module Sawyer
 
     def marshal_load(dumped)
       @attrs, @_fields, @_rels = *dumped.shift(3)
+      @_metaclass = (class << self; self; end)
     end
   end
 end
