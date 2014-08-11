@@ -4,3 +4,4 @@ vendor/gems
 .bundle
 Gemfile.lock
 bin
+.DS_Store

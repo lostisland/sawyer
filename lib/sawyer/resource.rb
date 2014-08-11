@@ -15,13 +15,16 @@ module Sawyer
       data, links = agent.parse_links(data)
       @_rels = Relation.from_links(agent, links)
       @_fields = Set.new
-      @_metaclass = (class << self; self; end)
       @attrs = {}
       data.each do |key, value|
         @_fields << key
         @attrs[key.to_sym] = process_value(value)
       end
-      @_metaclass.send(:attr_accessor, *data.keys)
+      metaclass.send(:attr_accessor, *data.keys)
+    end
+
+    def metaclass
+      (class << self; self; end)
     end
 
     # Processes an individual value of this resource.  Hashes get exploded
@@ -77,14 +80,14 @@ module Sawyer
     def method_missing(method, *args)
       attr_name, suffix = method.to_s.scan(/([a-z0-9\_]+)(\?|\=)?$/i).first
       if suffix == ATTR_SETTER
-        @_metaclass.send(:attr_accessor, attr_name)
+        metaclass.send(:attr_accessor, attr_name)
         @_fields << attr_name.to_sym
         send(method, args.first)
       elsif attr_name && @_fields.include?(attr_name.to_sym)
         value = @attrs[attr_name.to_sym]
         case suffix
              when nil
-               @_metaclass.send(:attr_accessor, attr_name)
+               metaclass.send(:attr_accessor, attr_name)
                value
              when ATTR_PREDICATE then !!value
              end
