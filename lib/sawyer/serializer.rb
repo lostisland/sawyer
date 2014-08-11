@@ -58,7 +58,7 @@ module Sawyer
     #
     # Returns a decoded Object.
     def decode(data)
-      return nil if data.nil? || data.empty?
+      return nil if data.nil? || data.strip.empty?
       decode_object(@load.call(data))
     end
 

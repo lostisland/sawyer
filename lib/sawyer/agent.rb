@@ -122,7 +122,7 @@ module Sawyer
     #
     # Returns an Object resource (Hash by default).
     def decode_body(str)
-      @serializer.decode(str.nil? ? nil : str.strip)
+      @serializer.decode(str)
     end
 
     def parse_links(data)
