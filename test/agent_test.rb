@@ -182,6 +182,20 @@ module Sawyer
         Marshal.load(Marshal.dump(res))
       end
     end
+
+    def test_blank_response_doesnt_raise
+      @stubs.get "/a/" do |env|
+        assert_equal "foo.com", env[:url].host
+        [200, { "Content-Type" => "application/json" }, " "]
+      end
+
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+        conn.adapter :test, @stubs
+      end
+
+      assert_nothing_raised do
+        assert_equal 200, agent.root.status
+      end
+    end
   end
 end
-
