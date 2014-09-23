@@ -3,7 +3,8 @@ module Sawyer
     attr_reader :agent,
       :status,
       :headers,
-      :data,
+      :env,
+      :body,
       :rels
 
     # Builds a Response after a completed request.
@@ -15,10 +16,17 @@ module Sawyer
       @status  = res.status
       @headers = res.headers
       @env     = res.env
-      @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
+      @body    = res.body
       @rels    = process_rels
       @started = options[:sawyer_started]
       @ended   = options[:sawyer_ended]
+    end
+
+    def data
+      @data ||= begin
+        return(body) unless (headers[:content_type] =~ /json|msgpack/) 
+        process_data(agent.decode_body(body))
+      end
     end
 
     # Turns parsed contents from an API response into a Resource or
@@ -58,7 +66,7 @@ module Sawyer
     end
 
     def inspect
-      %(#<#{self.class}: #{@status} @rels=#{@rels.inspect} @data=#{@data.inspect}>)
+      %(#<#{self.class}: #{@status} @rels=#{@rels.inspect} @data=#{data.inspect}>)
     end
   end
 end
