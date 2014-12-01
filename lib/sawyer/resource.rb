@@ -5,6 +5,7 @@ module Sawyer
     attr_reader :attrs
     alias to_hash attrs
     alias to_h attrs
+    include Enumerable
 
     # Initializes a Resource with the given data.
     #
@@ -120,6 +121,10 @@ module Sawyer
       to_attrs.respond_to?(:pretty_inspect) ? to_attrs.pretty_inspect : to_attrs.inspect
     end
 
+    def each(&block)
+      @attrs.each(&block)
+    end
+
     # private
     def to_yaml_properties
       [:@attrs, :@_fields, :@_rels]
@@ -142,10 +147,6 @@ module Sawyer
     def marshal_load(dumped)
       @attrs, @_fields, @_rels = *dumped.shift(3)
       @_metaclass = (class << self; self; end)
-    end
-
-    def each(&block)
-      @attrs.each(&block)
     end
   end
 end
