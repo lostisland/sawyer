@@ -181,7 +181,13 @@ module Sawyer
       resource = Resource.new @agent, { :a => 1, :b => 2 }
       output = []
       resource.each { |k,v| output << [k,v] }
-      assert_equal output, [[:a, 1], [:b, 2]]
+      assert_equal [[:a, 1], [:b, 2]], output
+    end
+
+    def test_enumerable
+      resource = Resource.new @agent, { :a => 1, :b => 2 }
+      enum = resource.map
+      assert_equal Enumerator, enum.class
     end
   end
 end
