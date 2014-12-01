@@ -176,5 +176,12 @@ module Sawyer
       resource = Resource.new @agent, :a => 1
       assert_equal "{:a=>1}\n", resource.inspect
     end
+
+    def test_each
+      resource = Resource.new @agent, { :a => 1, :b => 2 }
+      output = []
+      resource.each { |k,v| output << [k,v] }
+      assert_equal output, [[:a, 1], [:b, 2]]
+    end
   end
 end
