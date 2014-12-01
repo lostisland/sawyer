@@ -143,5 +143,9 @@ module Sawyer
       @attrs, @_fields, @_rels = *dumped.shift(3)
       @_metaclass = (class << self; self; end)
     end
+
+    def each(&block)
+      @attrs.each(&block)
+    end
   end
 end
