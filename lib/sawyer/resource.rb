@@ -5,6 +5,7 @@ module Sawyer
     attr_reader :attrs
     alias to_hash attrs
     alias to_h attrs
+    include Enumerable
 
     # Initializes a Resource with the given data.
     #
@@ -118,6 +119,10 @@ module Sawyer
 
     def inspect
       to_attrs.respond_to?(:pretty_inspect) ? to_attrs.pretty_inspect : to_attrs.inspect
+    end
+
+    def each(&block)
+      @attrs.each(&block)
     end
 
     # private
