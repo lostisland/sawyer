@@ -136,7 +136,7 @@ module Sawyer
         if hash[k].is_a?(Sawyer::Resource)
           hash[k] = hash[k].to_attrs
         elsif hash[k].is_a?(Array) && hash[k].all?{|el| el.is_a?(Sawyer::Resource)}
-          hash[k] = hash[k].collect{|el| el.to_attrs}          
+          hash[k] = hash[k].collect{|el| el.to_attrs}
         end
       end
       hash

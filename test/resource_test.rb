@@ -127,7 +127,7 @@ module Sawyer
       hash = {:a => 1 }
       assert_equal hash, res.to_h
     end
-    
+
     def test_to_attrs_for_sawyer_resource_arrays
       res = Resource.new @agent, :a => 1, :b => [Resource.new(@agent, :a => 2)]
       hash = {:a => 1, :b => [{:a => 2}]}
