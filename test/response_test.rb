@@ -4,27 +4,26 @@ module Sawyer
   class ResponseTest < TestCase
     def setup
       @now = Time.now
-      @stubs = Faraday::Adapter::Test::Stubs.new
-      @agent = Sawyer::Agent.new "http://foo.com" do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test, @stubs do |stub|
-          stub.get '/' do
-            [200, {
-              'Content-Type' => 'application/json',
-              'Link' =>  '</starred?page=2>; rel="next", </starred?page=19>; rel="last"'
-              }, Sawyer::Agent.encode(
-              :a => 1,
-              :_links => {
-                :self => {:href => '/a', :method => 'POST'}
-              }
-            )]
-          end
-
-          stub.get '/emails' do
-            emails = %w(rick@example.com technoweenie@example.com)
-            [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(emails)]
-          end
+      @stubs = Hurley::Test.new do |test|
+        test.get '/emails' do
+          emails = %w(rick@example.com technoweenie@example.com)
+          [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(emails)]
         end
+        test.get '/' do
+          [200, {
+            'Content-Type' => 'application/json',
+            'Link' =>  '</starred?page=2>; rel="next", </starred?page=19>; rel="last"'
+            }, Sawyer::Agent.encode(
+            :a => 1,
+            :_links => {
+              :self => {:href => '/a', :method => 'POST'}
+            }
+          )]
+        end
+      end
+
+      @agent = Sawyer::Agent.new "http://foo.com/" do |client|
+        client.connection = @stubs
       end
 
       @res = @agent.start

@@ -69,16 +69,15 @@ module Sawyer
     end
 
     def test_relation_api_calls
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test do |stubs|
-          stubs.get '/a/1' do
-            [200, {}, '{}']
-          end
-          stubs.delete '/a/1' do
-            [204, {}, '{}']
-          end
-        end
+      stubs = Hurley::Test.new
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |client|
+        client.connection = stubs
+      end
+      stubs.get '/a/1' do
+        [200, {}, '{}']
+      end
+      stubs.delete '/a/1' do
+        [204, {}, '{}']
       end
 
       rel = Sawyer::Relation.new agent, :self, "/a/1", "get,put,delete"
@@ -104,18 +103,17 @@ module Sawyer
     end
 
     def test_relation_api_calls_with_uri_tempate
-      agent = Sawyer::Agent.new "http://foo.com/a" do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test do |stubs|
-          stubs.get '/octocat/hello' do |env|
-            assert_equal "a=1&b=2", env[:url].query
-            [200, {}, '{}']
-          end
+      stubs = Hurley::Test.new
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |client|
+        client.connection = stubs
+      end
+      stubs.get '/octocat/hello' do |req|
+        assert_equal "a=1&b=2", req.query.to_s
+        [200, {}, '{}']
+      end
 
-          stubs.get '/a' do
-            [404, {}, '{}']
-          end
-        end
+      stubs.get '/a' do
+        [404, {}, '{}']
       end
 
       rel = Sawyer::Relation.new agent, :repo, "{/user,repo}{?a,b}"
@@ -136,24 +134,24 @@ module Sawyer
     end
 
     def test_allows_all_methods_when_not_in_strict_mode
-
-      agent = Sawyer::Agent.new "http://foo.com/a/", :allow_undefined_methods => true do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test do |stubs|
-          stubs.get '/a/1' do
-            [200, {}, '{}']
-          end
-          stubs.delete '/a/1' do
-            [204, {}, '{}']
-          end
-          stubs.post '/a/1' do
-            [200, {}, '{}']
-          end
-          stubs.put '/a/1' do
-            [204, {}, '{}']
-          end
-        end
+      stubs = Hurley::Test.new
+      stubs.get '/a/1' do
+        [200, {}, '{}']
       end
+      stubs.delete '/a/1' do
+        [204, {}, '{}']
+      end
+      stubs.post '/a/1' do
+        [200, {}, '{}']
+      end
+      stubs.put '/a/1' do
+        [204, {}, '{}']
+      end
+
+      agent = Sawyer::Agent.new "http://foo.com/a/" do |client|
+        client.connection = stubs
+      end
+      agent.allow_undefined_methods = true
 
       rel = Sawyer::Relation.new agent, :self, "/a/1"
       assert_equal 200, rel.get.status

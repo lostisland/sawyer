@@ -1,7 +1,5 @@
 require File.expand_path("../helper", __FILE__)
 
-require 'faraday/adapter/test'
-
 module Sawyer
   class AgentTest < TestCase
 
@@ -15,16 +13,15 @@ module Sawyer
     end
 
     def setup
-      @stubs = Faraday::Adapter::Test::Stubs.new
-      @agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test, @stubs
+      @stubs = Hurley::Test.new
+      @agent = Sawyer::Agent.new "http://foo.com/a/" do |client|
+        client.connection = @stubs
       end
     end
 
     def test_accesses_root_relations
-      @stubs.get '/a/' do |env|
-        assert_equal 'foo.com', env[:url].host
+      @stubs.get '/a/' do |req|
+        assert_equal 'foo.com', req.url.host
 
         [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
           :_links => {
@@ -38,8 +35,8 @@ module Sawyer
     end
 
     def test_allows_custom_rel_parsing
-      @stubs.get '/a/' do |env|
-        assert_equal 'foo.com', env[:url].host
+      @stubs.get '/a/' do |req|
+        assert_equal 'foo.com', req.url.host
 
         [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
           :url => '/',
@@ -47,23 +44,19 @@ module Sawyer
           :repos_url => '/repos')]
       end
 
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test, @stubs
-      end
-      agent.links_parser = InlineRelsParser.new
+      @agent.links_parser = InlineRelsParser.new
 
-      assert_equal 200, agent.root.status
+      assert_equal 200, @agent.root.status
 
-      assert_equal '/users', agent.rels[:users].href
-      assert_equal :get,     agent.rels[:users].method
-      assert_equal '/repos', agent.rels[:repos].href
-      assert_equal :get,     agent.rels[:repos].method
+      assert_equal '/users', @agent.rels[:users].href
+      assert_equal :get,     @agent.rels[:users].method
+      assert_equal '/repos', @agent.rels[:repos].href
+      assert_equal :get,     @agent.rels[:repos].method
 
     end
 
     def test_saves_root_endpoint
-      @stubs.get '/a/' do |env|
+      @stubs.get '/a/' do |req|
         [200, {}, '{}']
       end
 
@@ -72,8 +65,8 @@ module Sawyer
     end
 
     def test_starts_a_session
-      @stubs.get '/a/' do |env|
-        assert_equal 'foo.com', env[:url].host
+      @stubs.get '/a/' do |req|
+        assert_equal 'foo.com', req.url.host
 
         [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
           :_links => {
@@ -90,10 +83,10 @@ module Sawyer
     end
 
     def test_requests_with_body_and_options
-      @stubs.post '/a/b/c' do |env|
-        assert_equal '{"a":1}', env[:body]
-        assert_equal 'abc',     env[:request_headers]['x-test']
-        assert_equal 'foo=bar', env[:url].query
+      @stubs.post '/a/b/c' do |req|
+        assert_equal '{"a":1}', req.body
+        assert_equal 'abc',     req.header['x-test']
+        assert_equal 'foo=bar', req.query.to_s
         [200, {}, "{}"]
       end
 
@@ -104,10 +97,10 @@ module Sawyer
     end
 
     def test_requests_with_body_and_options_to_get
-      @stubs.get '/a/b/c' do |env|
-        assert_nil env[:body]
-        assert_equal 'abc',     env[:request_headers]['x-test']
-        assert_equal 'foo=bar', env[:url].query
+      @stubs.get '/a/b/c' do |req|
+        assert_nil req.body
+        assert_equal 'abc',     req.header['x-test']
+        assert_equal 'foo=bar', req.url.query.to_s
         [200, {}, "{}"]
       end
 
@@ -156,8 +149,8 @@ module Sawyer
     end
 
     def test_does_not_encode_non_json_content_types
-      @stubs.get '/a/' do |env|
-        assert_equal 'foo.com', env[:url].host
+      @stubs.get '/a/' do |req|
+        assert_equal 'foo.com', req.url.host
 
         [200, {'Content-Type' => 'text/plain'}, "This is plain text"]
       end
@@ -184,17 +177,13 @@ module Sawyer
     end
 
     def test_blank_response_doesnt_raise
-      @stubs.get "/a/" do |env|
-        assert_equal "foo.com", env[:url].host
+      @stubs.get "/a/" do |req|
+        assert_equal "foo.com", req.url.host
         [200, { "Content-Type" => "application/json" }, " "]
       end
 
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
-        conn.adapter :test, @stubs
-      end
-
       assert_nothing_raised do
-        assert_equal 200, agent.root.status
+        assert_equal 200, @agent.root.status
       end
     end
   end

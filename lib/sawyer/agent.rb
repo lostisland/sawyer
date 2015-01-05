@@ -1,4 +1,4 @@
-require 'faraday'
+require 'hurley'
 require 'addressable/template'
 
 module Sawyer
@@ -31,21 +31,20 @@ module Sawyer
     # options  - Hash of options.
     #            :allow_undefined_methods  - Allow relations to call all the HTTP verbs,
     #                                        not just the ones defined.
-    #            :faraday                  - Optional Faraday::Connection to use.
+    #            :hurley                   - Optional Hurley::Client to use.
     #            :links_parser             - Optional parser to parse link relations
     #                                        Defaults: Sawyer::LinkParsers::Hal.new
     #            :serializer               - Optional serializer Class.  Defaults to
     #                                        self.serializer_class.
     #
-    # Yields the Faraday::Connection if a block is given.
+    # Yields the Hurley::Client if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @conn = (options && options[:faraday]) || Faraday.new
+      @client = (options && options[:hurley]) || Hurley::Client.new(@endpoint)
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
-      @conn.url_prefix = @endpoint
-      yield @conn if block_given?
+      yield @client if block_given?
     end
 
     # Public: Retains a reference to the root relations of the API.
@@ -69,7 +68,7 @@ module Sawyer
       call :get, @endpoint
     end
 
-    # Makes a request through Faraday.
+    # Makes a request through Hurley.
     #
     # method  - The Symbol name of an HTTP method.
     # url     - The String URL to access.  This can be relative to the Agent's
@@ -91,15 +90,15 @@ module Sawyer
       options ||= {}
       url = expand_url(url, options[:uri])
       started = nil
-      res = @conn.send method, url do |req|
+      res = @client.send method, url do |req|
         if data
           req.body = data.is_a?(String) ? data : encode_body(data)
         end
         if params = options[:query]
-          req.params.update params
+          req.query.update params
         end
         if headers = options[:headers]
-          req.headers.update headers
+          req.header.update headers
         end
         started = Time.now
       end
