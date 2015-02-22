@@ -40,7 +40,7 @@ module Sawyer
     # Yields the client if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @client = (options && options[:hurley]) || Hurley::Client.new(@endpoint)
+      @client = (options && options[:client]) || Hurley::Client.new(@endpoint)
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
