@@ -31,13 +31,13 @@ module Sawyer
     # options  - Hash of options.
     #            :allow_undefined_methods  - Allow relations to call all the HTTP verbs,
     #                                        not just the ones defined.
-    #            :hurley                   - Optional Hurley::Client to use.
+    #            :client                   - Optional client to use for requests.
     #            :links_parser             - Optional parser to parse link relations
     #                                        Defaults: Sawyer::LinkParsers::Hal.new
     #            :serializer               - Optional serializer Class.  Defaults to
     #                                        self.serializer_class.
     #
-    # Yields the Hurley::Client if a block is given.
+    # Yields the client if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
       @client = (options && options[:hurley]) || Hurley::Client.new(@endpoint)
@@ -68,7 +68,7 @@ module Sawyer
       call :get, @endpoint
     end
 
-    # Makes a request through Hurley.
+    # Makes a request through the client.
     #
     # method  - The Symbol name of an HTTP method.
     # url     - The String URL to access.  This can be relative to the Agent's
