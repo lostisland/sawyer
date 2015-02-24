@@ -1,5 +1,4 @@
 require 'hurley'
-require 'hurley/faraday_compat'
 require 'addressable/template'
 
 module Sawyer
@@ -41,8 +40,11 @@ module Sawyer
     # Yields the client if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @client = (options && client = options[:client]) || Hurley::Client.new
-      @client.url_prefix = @endpoint
+      @client = (options && client = options[:client]) || Hurley::Client.new(@endpoint)
+      if @client.respond_to?(:url_prefix=)
+        require 'faraday/hurley_compat'
+        @client.url_prefix = @endpoint
+      end
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
@@ -97,10 +99,10 @@ module Sawyer
           req.body = data.is_a?(String) ? data : encode_body(data)
         end
         if params = options[:query]
-          req.params.update params
+          req.query.update params
         end
         if headers = options[:headers]
-          req.headers.update headers
+          req.header.update headers
         end
         started = Time.now
       end
