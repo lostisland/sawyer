@@ -1,4 +1,6 @@
 require File.expand_path("../helper", __FILE__)
+require 'faraday'
+require 'faraday/adapter/test'
 
 module Sawyer
   class AgentTest < TestCase
@@ -185,6 +187,44 @@ module Sawyer
       assert_nothing_raised do
         assert_equal 200, @agent.root.status
       end
+    end
+
+    def test_supports_faraday_client
+      stubs = Faraday::Adapter::Test::Stubs.new
+      faraday = Faraday.new
+      agent = Sawyer::Agent.new("http://foo.com/a/", {:client => faraday}) do |conn|
+        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
+        conn.adapter :test, stubs
+      end
+
+      stubs.get '/a/' do |env|
+        [200, {}, "{}"]
+      end
+      assert_equal 200, agent.root.status
+
+      stubs.post '/a/b/c' do |env|
+        assert_equal '{"a":1}', env[:body]
+        assert_equal 'abc',     env[:request_headers]['x-test']
+        assert_equal 'foo=bar', env[:url].query
+        [200, {}, "{}"]
+      end
+
+      res = agent.call :post, 'b/c' , {:a => 1},
+        :headers => {"X-Test" => "abc"},
+        :query   => {:foo => 'bar'}
+      assert_equal 200, res.status
+
+      stubs.get '/a/b/c' do |env|
+        assert_nil env[:body]
+        assert_equal 'abc',     env[:request_headers]['x-test']
+        assert_equal 'foo=bar', env[:url].query
+        [200, {}, "{}"]
+      end
+
+      res = agent.call :get, 'b/c' , {:a => 1},
+        :headers => {"X-Test" => "abc"},
+        :query   => {:foo => 'bar'}
+      assert_equal 200, res.status
     end
   end
 end

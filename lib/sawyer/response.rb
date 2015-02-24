@@ -12,8 +12,8 @@ module Sawyer
     # res   - A Hurley::Response.
     def initialize(agent, res, options = {})
       @agent   = agent
-      @status  = res.status_code
-      @headers = res.header
+      @status  = res.status
+      @headers = res.headers
       @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
       @rels    = process_rels
       @started = options[:sawyer_started]

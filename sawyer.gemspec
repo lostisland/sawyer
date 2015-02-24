@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'hurley', '~> 0.1'
   spec.add_dependency 'addressable', ['~> 2.3.5']
+  spec.add_development_dependency 'faraday', ['~> 0.8', '< 0.10']
 
   spec.files = %w(Gemfile LICENSE.md README.md Rakefile)
   spec.files << "#{lib}.gemspec"
