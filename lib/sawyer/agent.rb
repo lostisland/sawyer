@@ -1,5 +1,5 @@
-require 'hurley'
 require 'addressable/template'
+require 'hurley'
 
 module Sawyer
   class Agent
