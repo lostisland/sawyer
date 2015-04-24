@@ -1,4 +1,4 @@
-require_relative "helper"
+require_relative "../../helper"
 
 module Sawyer
   class ResponseTest < TestCase
