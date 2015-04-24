@@ -1,5 +1,5 @@
-require 'test/unit'
-require File.expand_path('../../lib/sawyer', __FILE__)
+require "test/unit"
+require_relative "../lib/sawyer"
 
 class Sawyer::TestCase < Test::Unit::TestCase
   def default_test
