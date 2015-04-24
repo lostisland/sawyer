@@ -1,0 +1,6 @@
+bundler_args: --without development
+language: ruby
+cache: bundler
+rvm:
+  - 2.0.0
+  - 2.1.0
