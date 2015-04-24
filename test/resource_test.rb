@@ -1,4 +1,4 @@
-require File.expand_path("../helper", __FILE__)
+require_relative "helper"
 
 module Sawyer
   class ResourceTest < TestCase
