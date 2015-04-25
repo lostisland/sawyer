@@ -5,7 +5,7 @@ module Sawyer
     def setup
       @now = Time.now
       @stubs = Faraday::Adapter::Test::Stubs.new
-      @agent = Sawyer::Agent.new "http://foo.com" do |conn|
+      @agent = Sawyer::Agent.for "http://foo.com" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs do |stub|
           stub.get '/' do

@@ -159,6 +159,7 @@ module Sawyer
       conn = Faraday.new
 
       yield conn if block_given?
+
       new(endpoint, :faraday => conn)
     end
   end

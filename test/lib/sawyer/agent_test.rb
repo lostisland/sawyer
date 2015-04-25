@@ -47,7 +47,7 @@ module Sawyer
           :repos_url => '/repos')]
       end
 
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+      agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs
       end
@@ -169,18 +169,14 @@ module Sawyer
     end
 
     def test_handle_yaml_dump_and_load
-      assert_nothing_raised do
-        require 'yaml'
-        res = Agent.new 'http://example.com', :a => 1
-        YAML.load(YAML.dump(res))
-      end
+      require 'yaml'
+      res = Agent.for 'http://example.com'
+      YAML.load(YAML.dump(res))
     end
 
     def test_handle_marshal_dump_and_load
-      assert_nothing_raised do
-        res = Agent.new 'http://example.com', :a => 1
-        Marshal.load(Marshal.dump(res))
-      end
+      res = Agent.for 'http://example.com'
+      Marshal.load(Marshal.dump(res))
     end
 
     def test_blank_response_doesnt_raise
@@ -189,7 +185,7 @@ module Sawyer
         [200, { "Content-Type" => "application/json" }, " "]
       end
 
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+      agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
         conn.adapter :test, @stubs
       end
 

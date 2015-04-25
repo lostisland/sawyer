@@ -69,7 +69,7 @@ module Sawyer
     end
 
     def test_relation_api_calls
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+      agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
           stubs.get '/a/1' do
@@ -104,7 +104,7 @@ module Sawyer
     end
 
     def test_relation_api_calls_with_uri_tempate
-      agent = Sawyer::Agent.new "http://foo.com/a" do |conn|
+      agent = Sawyer::Agent.for "http://foo.com/a" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
           stubs.get '/octocat/hello' do |env|
@@ -137,7 +137,7 @@ module Sawyer
 
     def test_allows_all_methods_when_not_in_strict_mode
 
-      agent = Sawyer::Agent.new "http://foo.com/a/", :allow_undefined_methods => true do |conn|
+      agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
           stubs.get '/a/1' do
@@ -154,6 +154,7 @@ module Sawyer
           end
         end
       end
+      agent.allow_undefined_methods = true
 
       rel = Sawyer::Relation.new agent, :self, "/a/1"
       assert_equal 200, rel.get.status
