@@ -154,5 +154,12 @@ module Sawyer
     def marshal_load(dumped)
       @endpoint = *dumped.shift(1)
     end
+
+    def self.for(endpoint, connection: nil)
+      conn = Faraday.new
+
+      yield conn if block_given?
+      new(endpoint, :faraday => conn)
+    end
   end
 end

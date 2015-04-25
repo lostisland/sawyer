@@ -16,7 +16,7 @@ module Sawyer
 
     def setup
       @stubs = Faraday::Adapter::Test::Stubs.new
-      @agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
+      @agent = Sawyer::Agent.for "http://foo.com/a/", connection: :faraday do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs
       end
