@@ -6,8 +6,12 @@ module Sawyer
       @wrapped = wrapped
     end
 
+    def call(method, url, data = nil, options = nil)
+      raise "implemented in subclasses"
+    end
+
     def self.default
-      Faraday::Connection.new
+      ::Faraday::Connection.new
     end
   end
 end
