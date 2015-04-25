@@ -24,12 +24,12 @@ module Sawyer
 
     def test_uses_default_connection
       agent = Sawyer::Agent.for "https://example.com"
-      assert agent.instance_variable_get(:"@conn").is_a? Faraday::Connection
+      assert agent.instance_variable_get(:"@conn").is_a? Sawyer::Connection::Faraday
     end
 
     def test_builds_a_hurley_connection
       agent = Sawyer::Agent.for "https://example.com", connection: :hurley
-      assert agent.instance_variable_get(:"@conn").is_a? Hurley::Client
+      assert agent.instance_variable_get(:"@conn").is_a? Sawyer::Connection::Hurley
     end
 
     def test_accesses_root_relations

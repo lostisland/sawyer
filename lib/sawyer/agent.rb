@@ -159,17 +159,18 @@ module Sawyer
              when NilClass, :faraday
                require "faraday"
 
-               faraday = Faraday::new endpoint
+               faraday = ::Faraday.new endpoint
                faraday.url_prefix = endpoint
 
-               faraday
+               yield faraday if block_given?
+
+               Sawyer::Connection::Faraday.new endpoint, faraday
              when :hurley
                require "hurley"
 
-               Hurley::Client.new endpoint
+               hurley = ::Hurley::Client.new endpoint
+               Sawyer::Connection::Hurley.new endpoint, hurley
              end
-
-      yield conn if block_given?
 
       new(endpoint, :connection => conn)
     rescue LoadError => e
