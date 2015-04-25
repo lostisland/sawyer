@@ -6,6 +6,8 @@ module Sawyer
     NO_BODY = Set.new([:get, :head])
 
     attr_accessor :links_parser
+
+    # Allow relations to call all the HTTP verbs, not just the ones defined.
     attr_accessor :allow_undefined_methods
 
     class << self
@@ -29,9 +31,8 @@ module Sawyer
     #
     # endpoint - String URI of the API entry point.
     # options  - Hash of options.
-    #            :allow_undefined_methods  - Allow relations to call all the HTTP verbs,
-    #                                        not just the ones defined.
-    #            :faraday                  - Optional Faraday::Connection to use.
+    #            :connection               - Optional transport connection to use.
+    #                                        Default: Faraday::Connection.
     #            :links_parser             - Optional parser to parse link relations
     #                                        Defaults: Sawyer::LinkParsers::Hal.new
     #            :serializer               - Optional serializer Class.  Defaults to
@@ -40,7 +41,7 @@ module Sawyer
     # Yields the Faraday::Connection if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @conn = (options && options[:faraday]) || Faraday.new
+      @conn = (options && options[:connection]) || Faraday.new
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
@@ -160,7 +161,7 @@ module Sawyer
 
       yield conn if block_given?
 
-      new(endpoint, :faraday => conn)
+      new(endpoint, :connection => conn)
     end
   end
 end
