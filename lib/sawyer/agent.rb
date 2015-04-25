@@ -87,21 +87,14 @@ module Sawyer
         data      = nil
       end
 
+      if data
+        data = data.is_a?(String) ? data : encode_body(data)
+      end
+
       options ||= {}
       url = expand_url(url, options[:uri])
-      started = nil
-      res = @conn.send method, url do |req|
-        if data
-          req.body = data.is_a?(String) ? data : encode_body(data)
-        end
-        if params = options[:query]
-          req.params.update params
-        end
-        if headers = options[:headers]
-          req.headers.update headers
-        end
-        started = Time.now
-      end
+      started = Time.now
+      res = @conn.call(method, url, data, options)
 
       Response.new self, res, :sawyer_started => started, :sawyer_ended => Time.now
     end
