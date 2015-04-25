@@ -38,13 +38,12 @@ module Sawyer
     #                                        self.serializer_class.
     #
     # Yields the Faraday::Connection if a block is given.
-    def initialize(endpoint, options = nil)
+    def initialize(endpoint, adapter, options = nil)
       @endpoint = endpoint
-      @conn = (options && options[:connection]) || Connection.default
+      @adapter    = adapter
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
-      yield @conn if block_given?
     end
 
     # Public: Retains a reference to the root relations of the API.
@@ -93,10 +92,7 @@ module Sawyer
 
       options ||= {}
       url = expand_url(url, options[:uri])
-      started = Time.now
-      res = @conn.call(method, url, data, options)
-
-      Response.new self, res, :sawyer_started => started, :sawyer_ended => Time.now
+      @adapter.request(self, method, url, data, options)
     end
 
     # Encodes an object to a string for the API request.
@@ -147,10 +143,25 @@ module Sawyer
       @endpoint = *dumped.shift(1)
     end
 
-    def self.for(endpoint, connection: nil, &block)
-      conn = Sawyer::Connection.build(endpoint, connection: connection, &block)
+    def self.for(endpoint, adapter: nil, &block)
+      adapter = case adapter
+                when NilClass, :faraday
+                  require "faraday"
 
-      new(endpoint, :connection => conn)
+                  faraday = ::Faraday.new
+                  yield faraday if block_given?
+
+                  Sawyer::Adapters::Faraday.new endpoint, faraday
+                when :hurley
+                  require "hurley"
+
+                  hurley = ::Hurley::Client.new endpoint
+                  yield hurley if block_given?
+
+                  Sawyer::Adapters::Hurley.new endpoint, hurley
+                end
+
+      new(endpoint, adapter)
     rescue LoadError => e
       puts e.message
     end

@@ -16,7 +16,7 @@ module Sawyer
 
     def setup
       @stubs = Faraday::Adapter::Test::Stubs.new
-      @agent = Sawyer::Agent.for "http://foo.com/a/", connection: :faraday do |conn|
+      @agent = Sawyer::Agent.for "http://foo.com/a/", adapter: :faraday do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test, @stubs
       end
@@ -24,12 +24,12 @@ module Sawyer
 
     def test_uses_default_connection
       agent = Sawyer::Agent.for "https://example.com"
-      assert agent.instance_variable_get(:"@conn").is_a? Sawyer::Connection::Faraday
+      assert agent.instance_variable_get(:"@adapter").is_a? Sawyer::Adapters::Faraday
     end
 
-    def test_builds_a_hurley_connection
-      agent = Sawyer::Agent.for "https://example.com", connection: :hurley
-      assert agent.instance_variable_get(:"@conn").is_a? Sawyer::Connection::Hurley
+    def test_can_use_hurley
+      agent = Sawyer::Agent.for "https://example.com", adapter: :hurley
+      assert agent.instance_variable_get(:"@adapter").is_a? Sawyer::Adapters::Hurley
     end
 
     def test_accesses_root_relations
