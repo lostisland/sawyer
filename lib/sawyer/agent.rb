@@ -147,23 +147,8 @@ module Sawyer
       @endpoint = *dumped.shift(1)
     end
 
-    def self.for(endpoint, connection: nil)
-      conn = case connection
-             when NilClass, :faraday
-               require "faraday"
-
-               faraday = ::Faraday.new endpoint
-               faraday.url_prefix = endpoint
-
-               yield faraday if block_given?
-
-               Sawyer::Connection::Faraday.new endpoint, faraday
-             when :hurley
-               require "hurley"
-
-               hurley = ::Hurley::Client.new endpoint
-               Sawyer::Connection::Hurley.new endpoint, hurley
-             end
+    def self.for(endpoint, connection: nil, &block)
+      conn = Sawyer::Connection.build(endpoint, connection: connection, &block)
 
       new(endpoint, :connection => conn)
     rescue LoadError => e
