@@ -20,7 +20,12 @@ module Sawyer
           started = Time.now
         end
 
-        Response.new agent, res, :sawyer_started => started, :sawyer_ended => Time.now
+        Response.new agent,
+          status:  res.status,
+          headers: res.headers,
+          body:    res.body,
+          started: started,
+          ended:   Time.now
       end
     end
   end

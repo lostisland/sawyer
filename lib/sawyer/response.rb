@@ -8,16 +8,20 @@ module Sawyer
 
     # Builds a Response after a completed request.
     #
-    # agent - The Sawyer::Agent that is managing the API connection.
-    # res   - A Faraday::Response.
-    def initialize(agent, res, options = {})
+    # agent   - The Sawyer::Agent that is managing the API connection.
+    # status  - Number HTTP status code.
+    # headers - Hash of HTTP response headers.
+    # body    - String HTTP response body.
+    # started - Time request stared.
+    # ended   - Time when request ended.
+    def initialize(agent, status:, headers: {}, body: res, started:, ended:)
       @agent   = agent
-      @status  = res.status
-      @headers = res.headers
-      @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
+      @status  = status
+      @headers = headers
+      @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(body)) : body
       @rels    = process_rels
-      @started = options[:sawyer_started]
-      @ended   = options[:sawyer_ended]
+      @started = started
+      @ended   = ended
     end
 
     def timing
