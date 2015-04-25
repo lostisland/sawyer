@@ -7,6 +7,7 @@ end
 require 'set'
 
 %w(
+  connection
   resource
   relation
   response

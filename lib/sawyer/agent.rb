@@ -41,11 +41,10 @@ module Sawyer
     # Yields the Faraday::Connection if a block is given.
     def initialize(endpoint, options = nil)
       @endpoint = endpoint
-      @conn = (options && options[:connection]) || Faraday.new
+      @conn = (options && options[:connection]) || Connection.default
       @serializer = (options && options[:serializer]) || self.class.serializer
       @links_parser = (options && options[:links_parser]) || Sawyer::LinkParsers::Hal.new
       @allow_undefined_methods = (options && options[:allow_undefined_methods])
-      @conn.url_prefix = @endpoint
       yield @conn if block_given?
     end
 
@@ -157,11 +156,23 @@ module Sawyer
     end
 
     def self.for(endpoint, connection: nil)
-      conn = Faraday.new
+      conn = case connection
+             when NilClass, :faraday
+               faraday = Faraday::new endpoint
+               faraday.url_prefix = endpoint
+
+               faraday
+             when :hurley
+               require "hurley"
+
+               Hurley::Client.new endpoint
+             end
 
       yield conn if block_given?
 
       new(endpoint, :connection => conn)
+    rescue LoadError => e
+      puts e.message
     end
   end
 end

@@ -22,6 +22,16 @@ module Sawyer
       end
     end
 
+    def test_uses_default_connection
+      agent = Sawyer::Agent.for "https://example.com"
+      assert agent.instance_variable_get(:"@conn").is_a? Faraday::Connection
+    end
+
+    def test_builds_a_hurley_connection
+      agent = Sawyer::Agent.for "https://example.com", connection: :hurley
+      assert agent.instance_variable_get(:"@conn").is_a? Hurley::Client
+    end
+
     def test_accesses_root_relations
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
