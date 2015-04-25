@@ -1,4 +1,3 @@
-require 'faraday'
 require 'addressable/template'
 
 module Sawyer
@@ -158,6 +157,8 @@ module Sawyer
     def self.for(endpoint, connection: nil)
       conn = case connection
              when NilClass, :faraday
+               require "faraday"
+
                faraday = Faraday::new endpoint
                faraday.url_prefix = endpoint
 
