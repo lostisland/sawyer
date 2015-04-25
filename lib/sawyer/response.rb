@@ -20,6 +20,20 @@ module Sawyer
       @ended   = options[:sawyer_ended]
     end
 
+    def timing
+      @timing ||= @ended - @started
+    end
+
+    def time
+      @ended
+    end
+
+    def inspect
+      %(#<#{self.class}: #{@status} @rels=#{@rels.inspect} @data=#{@data.inspect}>)
+    end
+
+    private
+
     # Turns parsed contents from an API response into a Resource or
     # collection of Resources.
     #
@@ -48,16 +62,5 @@ module Sawyer
       Hash[*links.flatten]
     end
 
-    def timing
-      @timing ||= @ended - @started
-    end
-
-    def time
-      @ended
-    end
-
-    def inspect
-      %(#<#{self.class}: #{@status} @rels=#{@rels.inspect} @data=#{@data.inspect}>)
-    end
   end
 end
