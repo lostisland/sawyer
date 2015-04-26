@@ -13,7 +13,9 @@ describe Sawyer::Agent do
   end
 
   def setup
-    @agent = Sawyer::Agent.for "http://foo.com/a/", adapter: :faraday
+    @agents = []
+    @agents << Sawyer::Agent.for("http://foo.com/a/", adapter: :faraday)
+    @agents << Sawyer::Agent.for("http://foo.com/a/", adapter: :hurley)
   end
 
   it "uses default connection" do
@@ -34,10 +36,12 @@ describe Sawyer::Agent do
       to_return(:status => 200, :body => body,
                 :headers => { "Content-Type" => "application/json" })
 
-    assert_equal 200, @agent.root.status
+    @agents.each do |agent|
+      assert_equal 200, agent.root.status
 
-    assert_equal '/users', @agent.rels[:users].href
-    assert_equal :get,     @agent.rels[:users].method
+      assert_equal '/users', agent.rels[:users].href
+      assert_equal :get,     agent.rels[:users].method
+    end
   end
 
   it "allows custom rel parsing" do
@@ -65,8 +69,10 @@ describe Sawyer::Agent do
       to_return(:status => 200, :body => "{}",
                 :headers => { "Content-Type" => "application/json" })
 
-    assert_kind_of Sawyer::Response, @agent.root
-    refute_equal @agent.root.time, @agent.start.time
+    @agents.each do |agent|
+      assert_kind_of Sawyer::Response, agent.root
+      refute_equal agent.root.time, agent.start.time
+    end
   end
 
   it "starts a session" do
@@ -77,13 +83,15 @@ describe Sawyer::Agent do
       to_return(:status => 200, :body => body,
                 :headers => { "Content-Type" => "application/json" })
 
-    res = @agent.start
+    @agents.each do |agent|
+      res = agent.start
 
-    assert_equal 200, res.status
-    assert_kind_of Sawyer::Resource, resource = res.data
+      assert_equal 200, res.status
+      assert_kind_of Sawyer::Resource, resource = res.data
 
-    assert_equal '/users', resource.rels[:users].href
-    assert_equal :get,     resource.rels[:users].method
+      assert_equal '/users', resource.rels[:users].href
+      assert_equal :get,     resource.rels[:users].method
+    end
   end
 
   it "requests with body and options" do
@@ -91,20 +99,24 @@ describe Sawyer::Agent do
       with(:body => { "{\"a\":1}" => true }, :headers => {'X-Test'=>'abc'}).
       to_return(:status => 200)
 
-    res = @agent.call :post, 'b/c' , {:a => 1},
-      :headers => {"X-Test" => "abc"},
-      :query   => {:foo => 'bar'}
-    assert_equal 200, res.status
+    @agents.each do |agent|
+      res = agent.call :post, 'b/c' , {:a => 1},
+        :headers => {"X-Test" => "abc"},
+        :query   => {:foo => 'bar'}
+      assert_equal 200, res.status
+    end
   end
 
   it "requests with body and options to get" do
     stub_request(:get, "http://foo.com/a/b/c?foo=bar").
       to_return(:status => 200, :body => "", :headers => {})
 
-    res = @agent.call :get, 'b/c' , {:a => 1},
-      :headers => {"X-Test" => "abc"},
-      :query   => {:foo => 'bar'}
-    assert_equal 200, res.status
+    @agents.each do |agent|
+      res = agent.call :get, 'b/c' , {:a => 1},
+        :headers => {"X-Test" => "abc"},
+        :query   => {:foo => 'bar'}
+      assert_equal 200, res.status
+    end
   end
 
   it "encodes and decodes times" do
@@ -150,11 +162,13 @@ describe Sawyer::Agent do
       with(:headers => {"Accept"=>"text/plain"}).
       to_return(:status => 200, :body => "This is plain text")
 
-    res = @agent.call :get, '/a/',
-      :headers => {"Accept" => "text/plain"}
-    assert_equal 200, res.status
+    @agents.each do |agent|
+      res = agent.call :get, '/a/',
+        :headers => {"Accept" => "text/plain"}
+      assert_equal 200, res.status
 
-    assert_equal "This is plain text", res.data
+      assert_equal "This is plain text", res.data
+    end
   end
 
   it "handle yaml dump and load" do
