@@ -13,11 +13,7 @@ describe Sawyer::Agent do
   end
 
   def setup
-    @stubs = Faraday::Adapter::Test::Stubs.new
-    @agent = Sawyer::Agent.for "http://foo.com/a/", adapter: :faraday do |conn|
-      conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-      conn.adapter :test, @stubs
-    end
+    @agent = Sawyer::Agent.for "http://foo.com/a/", adapter: :faraday
   end
 
   it "uses default connection" do
@@ -31,13 +27,12 @@ describe Sawyer::Agent do
   end
 
   it "accesses root relations" do
-    @stubs.get '/a/' do |env|
-      assert_equal 'foo.com', env[:url].host
-
-      [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
+    body = Sawyer::Agent.encode(
         :_links => {
-          :users => {:href => '/users'}})]
-    end
+          :users => {:href => "/users"}})
+    stub_request(:get, "http://foo.com/a/").
+      to_return(:status => 200, :body => body,
+                :headers => { "Content-Type" => "application/json" })
 
     assert_equal 200, @agent.root.status
 
@@ -46,19 +41,15 @@ describe Sawyer::Agent do
   end
 
   it "allows custom rel parsing" do
-    @stubs.get '/a/' do |env|
-      assert_equal 'foo.com', env[:url].host
+    body = Sawyer::Agent.encode \
+             :url => "/",
+             :users_url => "/users",
+             :repos_url => "/repos"
+    stub_request(:get, "http://foo.com/a/").
+      to_return(:status => 200, :body => body,
+                :headers => { "Content-Type" => "application/json" })
 
-      [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
-        :url => '/',
-        :users_url => '/users',
-        :repos_url => '/repos')]
-    end
-
-    agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
-      conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-      conn.adapter :test, @stubs
-    end
+    agent = Sawyer::Agent.for "http://foo.com/a/"
     agent.links_parser = InlineRelsParser.new
 
     assert_equal 200, agent.root.status
@@ -67,26 +58,24 @@ describe Sawyer::Agent do
     assert_equal :get,     agent.rels[:users].method
     assert_equal '/repos', agent.rels[:repos].href
     assert_equal :get,     agent.rels[:repos].method
-
   end
 
   it "saves root endpoint" do
-    @stubs.get '/a/' do |env|
-      [200, {}, '{}']
-    end
+    stub_request(:get, "http://foo.com/a/").
+      to_return(:status => 200, :body => "{}",
+                :headers => { "Content-Type" => "application/json" })
 
     assert_kind_of Sawyer::Response, @agent.root
     refute_equal @agent.root.time, @agent.start.time
   end
 
   it "starts a session" do
-    @stubs.get '/a/' do |env|
-      assert_equal 'foo.com', env[:url].host
-
-      [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(
-        :_links => {
-          :users => {:href => '/users'}})]
-    end
+    body = Sawyer::Agent.encode \
+      :_links => {
+        :users => {:href => '/users'}}
+    stub_request(:get, "http://foo.com/a/").
+      to_return(:status => 200, :body => body,
+                :headers => { "Content-Type" => "application/json" })
 
     res = @agent.start
 
@@ -98,12 +87,9 @@ describe Sawyer::Agent do
   end
 
   it "requests with body and options" do
-    @stubs.post '/a/b/c' do |env|
-      assert_equal '{"a":1}', env[:body]
-      assert_equal 'abc',     env[:request_headers]['x-test']
-      assert_equal 'foo=bar', env[:url].query
-      [200, {}, "{}"]
-    end
+    stub_request(:post, "http://foo.com/a/b/c?foo=bar").
+      with(:body => { "{\"a\":1}" => true }, :headers => {'X-Test'=>'abc'}).
+      to_return(:status => 200)
 
     res = @agent.call :post, 'b/c' , {:a => 1},
       :headers => {"X-Test" => "abc"},
@@ -112,12 +98,8 @@ describe Sawyer::Agent do
   end
 
   it "requests with body and options to get" do
-    @stubs.get '/a/b/c' do |env|
-      assert_nil env[:body]
-      assert_equal 'abc',     env[:request_headers]['x-test']
-      assert_equal 'foo=bar', env[:url].query
-      [200, {}, "{}"]
-    end
+    stub_request(:get, "http://foo.com/a/b/c?foo=bar").
+      to_return(:status => 200, :body => "", :headers => {})
 
     res = @agent.call :get, 'b/c' , {:a => 1},
       :headers => {"X-Test" => "abc"},
@@ -164,11 +146,10 @@ describe Sawyer::Agent do
   end
 
   it "does not encode non json content types" do
-    @stubs.get '/a/' do |env|
-      assert_equal 'foo.com', env[:url].host
+    stub_request(:get, "http://foo.com/a/").
+      with(:headers => {"Accept"=>"text/plain"}).
+      to_return(:status => 200, :body => "This is plain text")
 
-      [200, {'Content-Type' => 'text/plain'}, "This is plain text"]
-    end
     res = @agent.call :get, '/a/',
       :headers => {"Accept" => "text/plain"}
     assert_equal 200, res.status
@@ -187,16 +168,12 @@ describe Sawyer::Agent do
     Marshal.load(Marshal.dump(res))
   end
 
-  it "blank response doesnt raise" do
-    @stubs.get "/a/" do |env|
-      assert_equal "foo.com", env[:url].host
-      [200, { "Content-Type" => "application/json" }, " "]
-    end
+  it "blank response doesn't raise" do
+    stub_request(:get, "http://foo.com/a/").
+      to_return(:status => 200, :body => " ",
+                :headers => { "Content-Type" => "application/json" })
 
-    agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
-      conn.adapter :test, @stubs
-    end
-
+    agent = Sawyer::Agent.for "http://foo.com/a/"
     assert_equal 200, agent.root.status
   end
 end

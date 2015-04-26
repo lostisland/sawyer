@@ -4,28 +4,25 @@ describe Sawyer::Response do
 
   def setup
     @now = Time.now
-    @stubs = Faraday::Adapter::Test::Stubs.new
-    @agent = Sawyer::Agent.for "http://foo.com" do |conn|
-      conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-      conn.adapter :test, @stubs do |stub|
-        stub.get '/' do
-          [200, {
-            'Content-Type' => 'application/json',
-            'Link' =>  '</starred?page=2>; rel="next", </starred?page=19>; rel="last"'
-            }, Sawyer::Agent.encode(
+    @agent = Sawyer::Agent.for "http://foo.com"
+
+    body = Sawyer::Agent.encode \
             :a => 1,
             :_links => {
               :self => {:href => '/a', :method => 'POST'}
             }
-          )]
-        end
+    stub_request(:get, "http://foo.com/").
+      to_return(:status => 200, :body => body,
+        :headers => {
+          "Content-Type" => "application/json",
+          "Link" =>  '</starred?page=2>; rel="next", </starred?page=19>; rel="last"'
+      })
 
-        stub.get '/emails' do
-          emails = %w(rick@example.com technoweenie@example.com)
-          [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(emails)]
-        end
-      end
-    end
+    emails = %w(rick@example.com technoweenie@example.com)
+    body = Sawyer::Agent.encode(emails)
+    stub_request(:get, "http://foo.com/emails").
+      to_return(:status => 200, :body => body,
+        :headers => { "Content-Type" => "application/json" })
 
     @res = @agent.start
     assert_kind_of Sawyer::Response, @res
@@ -59,9 +56,9 @@ describe Sawyer::Response do
   end
 
   it "makes request from relation" do
-    @stubs.post '/a' do
-      [201, {'Content-Type' => 'application/json'}, ""]
-    end
+    stub_request(:post, "http://foo.com/a").
+      to_return(:status => 201, :body => "",
+        :headers => { "Content-Type" => "application/json" })
 
     res = @res.data.rels[:self].call
     assert_equal 201, res.status

@@ -3,11 +3,7 @@ require_relative "../../helper"
 describe Sawyer::Resource do
 
   def setup
-    @stubs = Faraday::Adapter::Test::Stubs.new
-    @agent = Sawyer::Agent.for "http://foo.com/a/" do |conn|
-      conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-      conn.adapter :test, @stubs
-    end
+    @agent = Sawyer::Agent.for "http://foo.com/a/"
   end
 
   it "accessible_keys" do

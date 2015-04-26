@@ -5,4 +5,5 @@ gem 'rake'
 
 group :test do
   gem "hurley", "~> 0.1"
+  gem "webmock", "~> 1.21"
 end
