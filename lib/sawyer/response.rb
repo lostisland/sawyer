@@ -14,7 +14,7 @@ module Sawyer
     # body    - String HTTP response body.
     # started - Time request stared.
     # ended   - Time when request ended.
-    def initialize(agent, status:, headers: {}, body: res, started:, ended:)
+    def initialize(agent, status: nil, headers: {}, body: nil, started: nil, ended: nil)
       @agent   = agent
       @status  = status
       @headers = headers
