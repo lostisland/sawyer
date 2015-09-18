@@ -3,8 +3,6 @@ module Sawyer
     SPECIAL_METHODS = Set.new(%w(agent rels fields))
     attr_reader :_agent, :_rels, :_fields
     attr_reader :attrs
-    alias to_hash attrs
-    alias to_h attrs
     include Enumerable
 
     # Initializes a Resource with the given data.
@@ -141,6 +139,9 @@ module Sawyer
       end
       hash
     end
+
+    alias to_hash to_attrs
+    alias to_h to_attrs
 
     def marshal_dump
       [@attrs, @_fields, @_rels]
