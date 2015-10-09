@@ -1,15 +1,15 @@
 require 'sinatra'
-require 'yajl'
+require 'json'
 
 get '/' do
   app_type
 
-  Yajl.dump({
+  body JSON.dump({
     :_links => {
       :users  => {:href => "/users", :method => 'get,post'},
       :nigiri => {:href => "/nigiri"}
     }
-  }, :pretty => true)
+  })
 end
 
 def app_type
@@ -43,7 +43,7 @@ nigiri = [
 get '/users' do
   app_type
 
-  Yajl.dump users, :pretty => true
+  body JSON.dump users
 end
 
 new_users = {}
@@ -54,25 +54,25 @@ post '/users' do
 
   app_type
 
-  hash = Yajl.load request.body.read, :symbolize_keys => true
+  hash = JSON.load request.body.read
   new_users[hash[:login]] = hash
   
   headers "Location" => "/users/#{hash[:login]}"
   status 201
-  Yajl.dump hash.update(
+  body JSON.dump hash.update(
     :id => 3,
     :created_at => Time.now.utc.xmlschema,
     :_links => {
       :self              => {:href => "/users/#{hash[:login]}"},
       :favorites         => {:href => "/users/#{hash[:login]}/favorites", :method => 'get,post'}
     }
-  ), :pretty => true
+  )
 end
 
 get '/users/:login' do
   headers 'Content-Type' => app_type
   if hash = users.detect { |u| u[:login] == params[:login] }
-    Yajl.dump hash, :pretty => true
+    body JSON.dump hash
   else
     halt 404
   end
@@ -82,8 +82,8 @@ get '/users/:login/favorites' do
   app_type
 
   case params[:login]
-  when users[0][:login] then Yajl.dump([nigiri[0]], :pretty => true)
-  when users[1][:login] then Yajl.dump([], :pretty => true)
+  when users[0][:login] then body JSON.dump([nigiri[0]])
+  when users[1][:login] then body JSON.dump([])
   else halt 404
   end
 end
@@ -99,14 +99,14 @@ end
 get '/nigiri' do
   app_type
 
-  Yajl.dump nigiri, :pretty => true
+  body JSON.dump nigiri
 end
 
 get '/nigiri/:name' do
   app_type
 
   if hash = nigiri.detect { |n| n[:name] == params[:name] }
-    Yajl.dump hash, :pretty => true
+    body JSON.dump hash
   else
     halt(404)
   end
