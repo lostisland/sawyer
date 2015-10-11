@@ -9,12 +9,11 @@ module Sawyer
     # Builds a Response after a completed request.
     #
     # agent - The Sawyer::Agent that is managing the API connection.
-    # res   - A Faraday::Response.
+    # res   - A Hurley::Response.
     def initialize(agent, res, options = {})
       @agent   = agent
-      @status  = res.status
-      @headers = res.headers
-      @env     = res.env
+      @status  = res.status_code
+      @headers = res.header
       @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
       @rels    = process_rels
       @started = options[:sawyer_started]

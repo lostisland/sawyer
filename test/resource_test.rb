@@ -4,10 +4,9 @@ module Sawyer
   class ResourceTest < TestCase
 
     def setup
-      @stubs = Faraday::Adapter::Test::Stubs.new
-      @agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
-        conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
-        conn.adapter :test, @stubs
+      @stubs = Hurley::Test.new
+      @agent = Sawyer::Agent.new "http://foo.com/a/" do |client|
+        client.connection = @stubs
       end
     end
 
