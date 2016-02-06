@@ -99,9 +99,7 @@ module Sawyer
       assert !res.respond_to?(:b)
       assert !res.respond_to?(:b=)
       assert_nil res.b
-      assert_nothing_raised do
-        res.b
-      end
+      res.b
     end
 
     def test_dynamic_attribute_methods_from_setter
@@ -169,24 +167,20 @@ module Sawyer
     end
 
     def test_handle_yaml_dump
-      assert_nothing_raised do
-        require 'yaml'
-        res = Resource.new @agent, :a => 1
-        YAML.dump(res)
-      end
+      require 'yaml'
+      res = Resource.new @agent, :a => 1
+      YAML.dump(res)
     end
 
     def test_handle_marshal_dump
-      assert_nothing_raised do
-        dump = Marshal.dump(Resource.new(@agent, :a => 1))
-        resource = Marshal.load(dump)
-        assert_equal 1, resource.a
-      end
+      dump = Marshal.dump(Resource.new(@agent, :a => 1))
+      resource = Marshal.load(dump)
+      assert_equal 1, resource.a
     end
 
     def test_inspect
       resource = Resource.new @agent, :a => 1
-      assert_equal "{:a=>1}\n", resource.inspect
+      assert_equal "{:a=>1}", resource.inspect
     end
 
     def test_each

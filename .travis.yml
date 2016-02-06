@@ -1,0 +1,20 @@
+language: ruby
+
+rvm:
+  - jruby
+  - rbx-2
+  - 2.0
+  - 2.1
+  - 2.2
+
+bundler_args: --without development
+
+sudo: false
+
+matrix:
+  allow_failures:
+    - rvm: rbx-2
+    - rvm: jruby
+
+notifications:
+  emails: false
