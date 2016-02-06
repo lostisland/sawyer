@@ -168,7 +168,7 @@ module Sawyer
       rel  = Sawyer::Relation.from_link(nil, :self, hash)
       map << rel
 
-      assert_equal "{:self_url=>\"/users/1\"}\n", map.inspect
+      assert_equal "{:self_url=>\"/users/1\"}", map.inspect
     end
   end
 end

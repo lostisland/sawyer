@@ -68,7 +68,7 @@ module Sawyer
       end
 
       assert_kind_of Sawyer::Response, @agent.root
-      assert_not_equal @agent.root.time, @agent.start.time
+      refute_equal @agent.root.time, @agent.start.time
     end
 
     def test_starts_a_session
@@ -169,18 +169,14 @@ module Sawyer
     end
 
     def test_handle_yaml_dump_and_load
-      assert_nothing_raised do
-        require 'yaml'
-        res = Agent.new 'http://example.com', :a => 1
-        YAML.load(YAML.dump(res))
-      end
+      require 'yaml'
+      res = Agent.new 'http://example.com', :a => 1
+      YAML.load(YAML.dump(res))
     end
 
     def test_handle_marshal_dump_and_load
-      assert_nothing_raised do
-        res = Agent.new 'http://example.com', :a => 1
-        Marshal.load(Marshal.dump(res))
-      end
+      res = Agent.new 'http://example.com', :a => 1
+      Marshal.load(Marshal.dump(res))
     end
 
     def test_blank_response_doesnt_raise
@@ -193,9 +189,7 @@ module Sawyer
         conn.adapter :test, @stubs
       end
 
-      assert_nothing_raised do
-        assert_equal 200, agent.root.status
-      end
+      assert_equal 200, agent.root.status
     end
   end
 end
