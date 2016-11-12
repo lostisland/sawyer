@@ -143,6 +143,10 @@ module Sawyer
     end
 
     # private
+    
+    def encode_with(coder)
+    end
+    
     def to_yaml_properties
       [:@endpoint]
     end

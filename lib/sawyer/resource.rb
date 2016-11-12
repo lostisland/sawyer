@@ -128,6 +128,9 @@ module Sawyer
       [:@attrs, :@_fields, :@_rels]
     end
 
+    def encode_with(coder)
+    end
+
     def to_attrs
       hash = self.attrs.clone
       hash.keys.each do |k|
