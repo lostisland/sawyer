@@ -1,20 +1,23 @@
 language: ruby
 
 rvm:
-  - jruby
-  - rbx-2
+  - jruby-9.1.6.0
   - 2.0
   - 2.1
   - 2.2
+  - 2.3.1
+  - 2.4.0-preview3
 
 bundler_args: --without development
 
 sudo: false
 
 matrix:
+  include:
+    - rvm: jruby-9.1.6.0
+      jdk: oraclejdk8
   allow_failures:
-    - rvm: rbx-2
-    - rvm: jruby
-
+    - rvm: jruby-9.1.6.0
+      jdk: oraclejdk8
 notifications:
   emails: false
