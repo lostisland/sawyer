@@ -78,8 +78,9 @@ module Sawyer
     #           requests can have no body, so this can be the options Hash
     #           instead.
     # options - Hash of option to configure the API request.
-    #           :headers - Hash of API headers to set.
-    #           :query   - Hash of URL query params to set.
+    #           :headers  - Hash of API headers to set.
+    #           :query    - Hash of URL query params to set.
+    #           :raw_body - Boolean to process response body or keep it raw. Default to false
     #
     # Returns a Sawyer::Response.
     def call(method, url, data = nil, options = nil)
@@ -104,7 +105,7 @@ module Sawyer
         started = Time.now
       end
 
-      Response.new self, res, :sawyer_started => started, :sawyer_ended => Time.now
+      Response.new self, res, :sawyer_started => started, :sawyer_ended => Time.now, :raw_body => (options[:raw_body] || false)
     end
 
     # Encodes an object to a string for the API request.

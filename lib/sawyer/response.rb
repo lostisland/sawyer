@@ -15,7 +15,7 @@ module Sawyer
       @status  = res.status
       @headers = res.headers
       @env     = res.env
-      @data    = @headers[:content_type] =~ /json|msgpack/ ? process_data(@agent.decode_body(res.body)) : res.body
+      @data    = @headers[:content_type] =~ /json|msgpack/ && !options[:raw_body] ? process_data(@agent.decode_body(res.body)) : res.body
       @rels    = process_rels
       @started = options[:sawyer_started]
       @ended   = options[:sawyer_ended]
