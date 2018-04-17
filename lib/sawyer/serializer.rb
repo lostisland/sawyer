@@ -4,7 +4,13 @@ require 'time'
 module Sawyer
   class Serializer
     def self.any_json
-      yajl || multi_json || json
+      serializer = yajl || multi_json || json
+
+      if not serializer
+        raise RuntimeError, "'json' library is need but could not be required"
+      end
+
+      serializer
     end
 
     def self.yajl
