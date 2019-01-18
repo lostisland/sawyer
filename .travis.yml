@@ -1,4 +1,5 @@
 language: ruby
+cache: bundler
 
 rvm:
   - jruby
@@ -6,10 +7,8 @@ rvm:
   - 2.0
   - 2.1
   - 2.2
-
-bundler_args: --without development
-
-sudo: false
+  - 2.3
+  - 2.4
 
 matrix:
   allow_failures:
