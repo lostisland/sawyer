@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.licenses = ['MIT']
 
   spec.add_dependency 'faraday',      ['~> 0.8', '< 1.0']
-  spec.add_dependency 'addressable', ['>= 2.3.5', '< 2.6']
+  spec.add_dependency 'addressable', ['>= 2.3.5', '< 2.7']
 
   spec.files = %w(Gemfile LICENSE.md README.md Rakefile)
   spec.files << "#{lib}.gemspec"
