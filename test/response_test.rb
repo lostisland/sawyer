@@ -39,6 +39,15 @@ module Sawyer
       assert_equal 'application/json', @res.headers['content-type']
     end
 
+    def test_gets_env
+      assert_equal :get, @res.env.method
+    end
+
+    def test_gets_raw_body
+      assert_kind_of String, @res.body
+      assert (@res.body =~ /^\{/)
+    end
+
     def test_gets_body
       assert_equal 1, @res.data.a
       assert_equal [:a], @res.data.fields.to_a
