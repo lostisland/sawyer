@@ -16,6 +16,8 @@ matrix:
   allow_failures:
     - rvm: rbx-2
     - rvm: jruby
+    - rvm: 2.5
+    - rvm: 2.6
 
 notifications:
   emails: false
