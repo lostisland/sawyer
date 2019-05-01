@@ -68,7 +68,6 @@ module Sawyer
       assert_equal [], rels.keys
     end
 
-    require 'pp'
     def test_relation_api_calls
       agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
