@@ -68,15 +68,24 @@ module Sawyer
       assert_equal [], rels.keys
     end
 
+    require 'pp'
     def test_relation_api_calls
       agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
-          stubs.get '/a/1' do
-            [200, {}, '{}']
+          stubs.get '/a/1' do |env|
+            if env.request_headers['Foo'] == 'Bar'
+              [200, {}, '{}']
+            else
+              [400, {}, '{}']
+            end
           end
-          stubs.delete '/a/1' do
-            [204, {}, '{}']
+          stubs.delete '/a/1' do |env|
+            if env.request_headers['Foo'] == 'Bar'
+              [204, {}, '{}']
+            else
+              [400, {}, '{}']
+            end
           end
         end
       end
@@ -87,16 +96,17 @@ module Sawyer
         assert rel.available_methods.include?(m), "#{m.inspect} is not available: #{rel.available_methods.inspect}"
       end
 
-      assert_equal 200, rel.call.status
-      assert_equal 200, rel.call(:method => :head).status
-      assert_equal 204, rel.call(nil, :method => :delete).status
+      options = { headers: { 'Foo' => 'Bar' } }
+      assert_equal 200, rel.call(nil, options).status
+      assert_equal 200, rel.call(options.merge(method: :head)).status
+      assert_equal 204, rel.call(nil, options.merge(method: :delete)).status
       assert_raises ArgumentError do
         rel.call nil, :method => :post
       end
 
-      assert_equal 200, rel.head.status
-      assert_equal 200, rel.get.status
-      assert_equal 204, rel.delete.status
+      assert_equal 200, rel.head(options).status
+      assert_equal 200, rel.get(options).status
+      assert_equal 204, rel.delete(nil, options).status
 
       assert_raises ArgumentError do
         rel.post
