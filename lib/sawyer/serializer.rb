@@ -4,7 +4,9 @@ require 'time'
 module Sawyer
   class Serializer
     def self.any_json
-      yajl || multi_json || json
+      yajl || multi_json || json || begin
+        raise RuntimeError, "Sawyer requires a JSON gem: yajl, multi_json, or json"
+      end
     end
 
     def self.yajl
