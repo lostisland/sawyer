@@ -72,10 +72,12 @@ module Sawyer
       agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
-          stubs.get '/a/1' do
+          stubs.get '/a/1' do |env|
+            assert_equal 'Bar', env.request_headers['Foo']
             [200, {}, '{}']
           end
-          stubs.delete '/a/1' do
+          stubs.delete '/a/1' do |env|
+            assert_equal 'Bar', env.request_headers['Foo']
             [204, {}, '{}']
           end
         end
@@ -87,16 +89,17 @@ module Sawyer
         assert rel.available_methods.include?(m), "#{m.inspect} is not available: #{rel.available_methods.inspect}"
       end
 
-      assert_equal 200, rel.call.status
-      assert_equal 200, rel.call(:method => :head).status
-      assert_equal 204, rel.call(nil, :method => :delete).status
+      options = { headers: { 'Foo' => 'Bar' } }
+      assert_equal 200, rel.call(nil, options).status
+      assert_equal 200, rel.call(options.merge(method: :head)).status
+      assert_equal 204, rel.call(nil, options.merge(method: :delete)).status
       assert_raises ArgumentError do
         rel.call nil, :method => :post
       end
 
-      assert_equal 200, rel.head.status
-      assert_equal 200, rel.get.status
-      assert_equal 204, rel.delete.status
+      assert_equal 200, rel.head(options).status
+      assert_equal 200, rel.get(options).status
+      assert_equal 204, rel.delete(nil, options).status
 
       assert_raises ArgumentError do
         rel.post
@@ -168,7 +171,7 @@ module Sawyer
       rel  = Sawyer::Relation.from_link(nil, :self, hash)
       map << rel
 
-      assert_equal "{:self_url=>\"/users/1\"}", map.inspect
+      assert_equal "{:self_url=>\"/users/1\"}", map.inspect.strip
     end
   end
 end
