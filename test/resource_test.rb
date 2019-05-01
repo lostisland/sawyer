@@ -180,7 +180,7 @@ module Sawyer
 
     def test_inspect
       resource = Resource.new @agent, :a => 1
-      assert_equal "{:a=>1}", resource.inspect
+      assert_equal "{:a=>1}", resource.inspect.strip
     end
 
     def test_each

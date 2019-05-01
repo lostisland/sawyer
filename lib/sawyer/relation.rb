@@ -38,6 +38,7 @@ module Sawyer
       def keys
         @map.keys
       end
+
       def to_hash
         pairs = @map.map do |k, v|
           [(k.to_s + "_url").to_sym, v.href]
