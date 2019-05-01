@@ -73,18 +73,12 @@ module Sawyer
         conn.builder.handlers.delete(Faraday::Adapter::NetHttp)
         conn.adapter :test do |stubs|
           stubs.get '/a/1' do |env|
-            if env.request_headers['Foo'] == 'Bar'
-              [200, {}, '{}']
-            else
-              [400, {}, '{}']
-            end
+            assert_equal 'Bar', env.request_headers['Foo']
+            [200, {}, '{}']
           end
           stubs.delete '/a/1' do |env|
-            if env.request_headers['Foo'] == 'Bar'
-              [204, {}, '{}']
-            else
-              [400, {}, '{}']
-            end
+            assert_equal 'Bar', env.request_headers['Foo']
+            [204, {}, '{}']
           end
         end
       end
