@@ -169,6 +169,8 @@ module Sawyer
     end
 
     def test_handle_yaml_dump_and_load
+      return unless supports_yaml?
+
       require 'yaml'
       res = Agent.new 'http://example.com', :a => 1
       YAML.load(YAML.dump(res))

@@ -167,6 +167,8 @@ module Sawyer
     end
 
     def test_handle_yaml_dump
+      return unless supports_yaml?
+
       require 'yaml'
       res = Resource.new @agent, :a => 1
       YAML.dump(res)
