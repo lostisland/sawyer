@@ -24,6 +24,17 @@ module Sawyer
             emails = %w(rick@example.com technoweenie@example.com)
             [200, {'Content-Type' => 'application/json'}, Sawyer::Agent.encode(emails)]
           end
+
+          stub.get '/link_relations' do
+            [
+              200,
+              {
+                'Content-Type' => 'application/json',
+                'Link' =>  '</link_relations?page=2>; rel="next", </starred?page=19>; rel="last", </blog_post>; rel="with-dashes"; type="type="text/html", </>; rel="http://example.net/foo"'
+              },
+              {}
+            ]
+          end
         end
       end
 
@@ -81,6 +92,12 @@ module Sawyer
       res = @agent.call(:get, '/emails')
       assert_equal 'rick@example.com', res.data.first
     end
+
+    def test_link_relations
+      res = @agent.call(:get, '/link_relations')
+
+      assert_equal "/", res.rels[:"http://example.net/foo"].href
+      assert_equal "/blog_post", res.rels[:"with-dashes"].href
+    end
   end
 end
-
