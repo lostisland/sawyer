@@ -48,6 +48,11 @@ module Sawyer
       yield @conn if block_given?
     end
 
+    # Public: Close the underlying connection.
+    def close
+      @conn.close
+    end
+
     # Public: Retains a reference to the root relations of the API.
     #
     # Returns a Sawyer::Relation::Map.

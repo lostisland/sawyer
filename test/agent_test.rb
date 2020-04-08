@@ -22,6 +22,10 @@ module Sawyer
       end
     end
 
+    def test_close
+      @agent.close
+    end
+
     def test_accesses_root_relations
       @stubs.get '/a/' do |env|
         assert_equal 'foo.com', env[:url].host
