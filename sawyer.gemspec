@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/lostisland/sawyer'
   spec.licenses = ['MIT']
 
-  spec.add_dependency 'faraday', "~> 1.0"
+  spec.add_dependency 'faraday', ">= 1"
   spec.add_dependency 'addressable', ['>= 2.3.5']
 
   spec.files = %w(Gemfile LICENSE.md README.md Rakefile)
