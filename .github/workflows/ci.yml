@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ '2.6', '2.7', '3.0', '3.1', 'rbx-2', 'jruby' ]
+        ruby: [ '2.6', '2.7', '3.0', '3.1', 'truffleruby', 'jruby' ]
         gemfile: [ 'faraday-0', 'faraday-1', 'faraday-2' ]
 
     steps:
@@ -28,5 +28,5 @@ jobs:
           bundler-cache: true
 
       - name: Test
-        continue-on-error: ${{ contains(fromJson('["rbx-2", "jruby"]'), matrix.ruby) }}
+        continue-on-error: ${{ contains(fromJson('["truffleruby", "jruby"]'), matrix.ruby) }}
         run: bundle exec rake
