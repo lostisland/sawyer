@@ -50,7 +50,7 @@ module Sawyer
 
     # Public: Close the underlying connection.
     def close
-      @conn.close
+      @conn.close if @conn.respond_to?(:close)
     end
 
     # Public: Retains a reference to the root relations of the API.
