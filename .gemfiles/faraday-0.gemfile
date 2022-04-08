@@ -1,3 +1,0 @@
-eval_gemfile '../Gemfile'
-
-gem 'faraday', '~> 0.9'
