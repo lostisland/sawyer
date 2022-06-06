@@ -22,6 +22,25 @@ module Sawyer
       assert res.fields.include?(:a)
     end
 
+    def test_dig
+      res = Resource.new @agent, :a => {:b => 1},
+        :_links => {:self => {:href => '/'}}
+
+      assert_equal 1, res.dig(:a, :b)
+      assert_nil res.dig(:a, :c)
+      assert_nil res.dig(:a, :c, :d)
+    end
+
+    def test_fetch
+      res = Resource.new @agent, :a => 1,
+        :_links => {:self => {:href => '/'}}
+
+      assert_equal 1, res.fetch(:a)
+      assert_equal 2, res.fetch(:b, 2)
+      assert_equal 3, res.fetch(:b) { 3 }
+      assert_raises(KeyError) { res.fetch(:b) }
+    end
+
     def test_clashing_keys
       res = Resource.new @agent, :agent => 1, :rels => 2, :fields => 3,
         :_links => {:self => {:href => '/'}}
