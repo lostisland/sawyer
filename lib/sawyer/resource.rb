@@ -1,9 +1,12 @@
+require 'forwardable'
+
 module Sawyer
   class Resource
     SPECIAL_METHODS = Set.new(%w(agent rels fields))
     attr_reader :_agent, :_rels, :_fields
     attr_reader :attrs
     include Enumerable
+    extend Forwardable
 
     # Initializes a Resource with the given data.
     #
@@ -68,6 +71,8 @@ module Sawyer
     rescue NoMethodError
       nil
     end
+
+    def_delegators :attrs, :dig, :fetch
 
     ATTR_SETTER    = '='.freeze
     ATTR_PREDICATE = '?'.freeze
