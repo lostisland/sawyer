@@ -21,7 +21,7 @@ jobs:
         faraday: [ '~> 0.17.3', '~> 1.0', '~> 2.0' ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
