@@ -191,11 +191,7 @@ module Sawyer
         [200, { "Content-Type" => "application/json" }, " "]
       end
 
-      agent = Sawyer::Agent.new "http://foo.com/a/" do |conn|
-        conn.adapter :test, @stubs
-      end
-
-      assert_equal 200, agent.root.status
+      assert_equal 200, @agent.root.status
     end
   end
 end
