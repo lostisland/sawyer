@@ -24,7 +24,7 @@ module Sawyer
 
     def data
       @data ||= begin
-        return(body) unless (headers[:content_type] =~ /json|msgpack/) 
+        return(body) unless (headers[:content_type] =~ /json|msgpack/)
         process_data(agent.decode_body(body))
       end
     end
@@ -49,7 +49,7 @@ module Sawyer
     # Returns an array of Relations
     def process_rels
       links = ( @headers["Link"] || "" ).split(', ').map do |link|
-        href, name = link.match(/<(.*?)>; rel="(\w+)"/).captures
+        href, name = link.match(/<(.*?)>; rel="(.+?)"/).captures
 
         [name.to_sym, Relation.from_link(@agent, name, :href => href)]
       end
