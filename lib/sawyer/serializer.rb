@@ -23,7 +23,11 @@ module Sawyer
 
     def self.multi_json
       require 'multi_json'
-      new(MultiJson)
+      if defined?(MultiJSON)
+        new(MultiJSON, :generate, :parse)
+      else
+        new(MultiJson)
+      end
     rescue LoadError
     end
 
